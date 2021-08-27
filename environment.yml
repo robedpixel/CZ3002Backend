@@ -1,0 +1,4 @@
+name: CZ3002
+dependencies:
+  - python=3.9
+  - django
