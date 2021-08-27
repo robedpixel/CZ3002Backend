@@ -1,0 +1,10 @@
+*.pyc
+/*
+!/.gitignore
+!/environment.yml
+!/README.md
+!/SetupCondaEnv.bat
+!/SetupCondaEnv.sh
+
+!/src
+/src/server/cz3002/__pycache__
