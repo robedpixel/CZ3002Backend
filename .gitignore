@@ -8,4 +8,5 @@
 !/databaseinfo.txt
 
 !/src
+/src/.idea
 /src/server/cz3002/__pycache__
