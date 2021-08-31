@@ -2,11 +2,13 @@ server ip/port: localhost:5432
 
 username: user
 password: userpassword
+database name: cz3002
 
 Tables:
 
 users:
 -uuid(UUID) (primary key)
+-role(tinyint)
 -username(varchar)
 -password(varchar)
 
@@ -14,10 +16,10 @@ userasgnmt:
 -userid(UUID)
 -questions(varchar) (use Python pickle to serialise/deserialise data into list)
 
-Questions:
--questionid(smallint)
--qnimg(BLOB)
--qnansimg1(BLOB)
--qnansimg2(BLOB)
--qnansimg3(BLOB)
--qnansimg4(BLOB)
+questions:
+-questionid(smallserial)
+-qnimg(bytea)
+-qnansimg1(bytea)
+-qnansimg2(bytea)
+-qnansimg3(bytea)
+-qnansimg4(bytea)
