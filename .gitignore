@@ -5,6 +5,7 @@
 !/README.md
 !/SetupCondaEnv.bat
 !/SetupCondaEnv.sh
+!/databaseinfo.txt
 
 !/src
 /src/server/cz3002/__pycache__

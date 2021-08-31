@@ -1,0 +1,23 @@
+server ip/port: localhost:5432
+
+username: user
+password: userpassword
+
+Tables:
+
+users:
+-uuid(UUID) (primary key)
+-username(varchar)
+-password(varchar)
+
+userasgnmt:
+-userid(UUID)
+-questions(varchar) (use Python pickle to serialise/deserialise data into list)
+
+Questions:
+-questionid(smallint)
+-qnimg(BLOB)
+-qnansimg1(BLOB)
+-qnansimg2(BLOB)
+-qnansimg3(BLOB)
+-qnansimg4(BLOB)
