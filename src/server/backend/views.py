@@ -15,7 +15,10 @@ def index(request):
 @ensure_csrf_cookie
 def createuser(request):
     if request.method == 'POST':
-        if request.session['role'] != 1:
+        try:
+            if request.session['role'] != 1:
+                return HttpResponse("invalid permissions", status=400)
+        except KeyError:
             return HttpResponse("invalid permissions", status=400)
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -69,4 +72,3 @@ def logout_user(request):
                 return HttpResponse(status=200)
         except KeyError:
             return HttpResponse(status=400)
-
