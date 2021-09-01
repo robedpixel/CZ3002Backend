@@ -2,7 +2,7 @@ import uuid
 
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 from .models import User
 from django.views.decorators.csrf import ensure_csrf_cookie
 
@@ -30,12 +30,25 @@ def debug_createuser(request):
                         saved_user.users = user_uuid
                         uuid_generated = True
 
-                saved_user.role = int(role)
+                if 0 <= role <= 1:
+                    saved_user.role = int(role)
+                else:
+                    return HttpResponse("bad user creation request", status=400)
                 saved_user.username = username
                 saved_user.password = password_hash
                 saved_user.save()
                 return HttpResponse(status=201)
             else:
-                return HttpResponse("bad user creation request",status=400)
+                return HttpResponse("bad user creation request", status=400)
         else:
             return HttpResponse("username already exists!", status=400)
+
+
+def debug_authenticate_user(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        database_acc_search = User.objects.filter(username=username)
+        if database_acc_search is not None:
+            matchcheck = check_password(password, database_acc_search[0].password)
+            print(matchcheck)
