@@ -12,11 +12,11 @@ backend_user:
 -username(varchar) (unique key)
 -password(varchar)
 
-userasgnmt:
+backend_userasgnmt:
 -userid(UUID)
 -questions(varchar) (use Python pickle to serialise/deserialise data into list)
 
-questions:
+backend_question:
 -questionid(smallserial)
 -qnimg(bytea)
 -qnansimg1(bytea)
