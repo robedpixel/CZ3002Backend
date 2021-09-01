@@ -6,10 +6,10 @@ database name: cz3002
 
 Tables:
 
-users:
+backend_user:
 -uuid(UUID) (primary key)
 -role(tinyint)
--username(varchar)
+-username(varchar) (unique key)
 -password(varchar)
 
 userasgnmt:
