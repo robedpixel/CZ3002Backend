@@ -76,11 +76,12 @@ WSGI_APPLICATION = 'cz3002.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'cz3002',
         'USER': 'user',
         'PASSWORD': 'userpassword',
-
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
