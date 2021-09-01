@@ -13,8 +13,10 @@ def index(request):
 
 
 @ensure_csrf_cookie
-def debug_createuser(request):
+def createuser(request):
     if request.method == 'POST':
+        if request.session['role'] != 1:
+            return HttpResponse("invalid permissions", status=400)
         username = request.POST.get('username')
         password = request.POST.get('password')
         role = request.POST.get('role')
@@ -44,11 +46,27 @@ def debug_createuser(request):
             return HttpResponse("username already exists!", status=400)
 
 
-def debug_authenticate_user(request):
+def auth_user(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         database_acc_search = User.objects.filter(username=username)
         if database_acc_search is not None:
             matchcheck = check_password(password, database_acc_search[0].password)
-            print(matchcheck)
+            if matchcheck:
+                request.session['authenticated'] = True
+                request.session['username'] = username
+                request.session['role'] = database_acc_search[0].role
+                return HttpResponse(status=200)
+    return HttpResponse(status=400)
+
+
+def logout_user(request):
+    if request.method == 'POST':
+        try:
+            if request.session['authenticated']:
+                request.session.flush()
+                return HttpResponse(status=200)
+        except KeyError:
+            return HttpResponse(status=400)
+
