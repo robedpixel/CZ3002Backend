@@ -131,5 +131,6 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #Login constants
+ROLE_ADMIN = 2
 ROLE_STAFF = 1
 ROLE_USER = 0
