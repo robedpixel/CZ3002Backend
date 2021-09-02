@@ -1,6 +1,6 @@
-/backend/user/create (POST)
+/backend/user/create (POST) # For creating user accounts
 -arguments:
-sessionid (session id of logged in medical staff/admin)
+sessionid cookie
 username (username of the user to be created)
 password (password of the user to be created)
 role (role of the user to be created)
@@ -10,19 +10,29 @@ HTTP response 201 if creation is successful
 HTTP response 400 otherwise
 
 
-/backend/user/login (POST)
+/backend/user/login (POST) # For logging into a session
 -arguments:
 username (username to login)
 password (password to login)
 
 -response:
-sessionid(session id for authenticated user), HTTP response 200 if login is successful
+sessionid cookie, HTTP response 200 if login is successful
 HTTP response 400 otherwise
 
 
-/backend/user/logout (POST)
+/backend/user/logout (POST) # For logging out of session
 -arguments:
--sessionid(session id for authenticated user)
+sessionid cookie
 
 -response:
--returns HTTP response 200 if successful
+returns HTTP response 200 if successful
+
+/backend/question/get (GET) # For getting question sets for user
+-arguments:
+sessionid cookie
+userid (uuid of user to retrieve questions from)
+
+-response:
+returns HTTP response 200 if successful
+json with fields:
+questions (array of questionids)
