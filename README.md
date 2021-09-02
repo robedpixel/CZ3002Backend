@@ -12,6 +12,6 @@ Django Backend server for CZ3002 project
 # Running the server
 1. Ensure that PostgreSQL is running
 2. Start anaconda console window
-3. Activate the CZ3002 Environment
+3. Activate the CZ3002 Environment ( conda activate CZ3002 )
 4. Run "runserver.bat" inside ./src/server
 5. Stop the server with CTRL-C
