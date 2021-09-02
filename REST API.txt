@@ -1,5 +1,6 @@
 /backend/user/create (POST)
 -arguments:
+sessionid (session id of logged in medical staff/admin)
 username (username of the user to be created)
 password (password of the user to be created)
 role (role of the user to be created)
@@ -15,10 +16,13 @@ username (username to login)
 password (password to login)
 
 -response:
-HTTP response 200 if login is successful
+sessionid(session id for authenticated user), HTTP response 200 if login is successful
 HTTP response 400 otherwise
 
 
 /backend/user/logout (POST)
--no arguments, requires session to be authenticated
+-arguments:
+-sessionid(session id for authenticated user)
+
+-response:
 -returns HTTP response 200 if successful
