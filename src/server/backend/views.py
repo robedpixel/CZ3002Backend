@@ -154,7 +154,7 @@ def assign_user_questions(request):
             return HttpResponse("Please Login", status=400)
 
 
-def get_user_questions(request):
+def get_user_assignment(request):
     if request.method == 'GET':
         try:
             if request.session['authenticated']:
@@ -173,3 +173,22 @@ def get_user_questions(request):
                     return HttpResponse("user has no assigned questions!", status=400)
         except KeyError:
             return HttpResponse("Please Login", status=400)
+
+
+def create_question(request):
+    if request.method == 'POST':
+        try:
+            if request.session['authenticated']:
+                if int(request.session['role']) >= 1:
+                    saved_question = Question()
+                    saved_question.save()
+                    return HttpResponse(status=200)
+                else:
+                    return HttpResponse("Invalid permissions!", status=400)
+        except KeyError:
+            return HttpResponse("Please Login", status=400)
+
+
+# TODO
+def update_question(request):
+    print("unfinished")

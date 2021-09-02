@@ -27,7 +27,8 @@ sessionid cookie
 -response:
 returns HTTP response 200 if successful
 
-/backend/question/get (GET) # For getting question sets for user
+
+/backend/question/assign/get (GET) # For getting question sets for user
 -arguments:
 sessionid cookie
 userid (uuid of user to retrieve questions from)
@@ -36,3 +37,11 @@ userid (uuid of user to retrieve questions from)
 returns HTTP response 200 if successful
 json with fields:
 questions (array of questionids)
+
+
+/backend/question/create (POST) # For creating an empty question in the system
+-arguments:
+sessionid cookie
+
+-response:
+returns HTTP response 200 if successful
