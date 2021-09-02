@@ -1,0 +1,24 @@
+/backend/user/create (POST)
+-arguments:
+username (username of the user to be created)
+password (password of the user to be created)
+role (role of the user to be created)
+
+-response:
+HTTP response 201 if creation is successful
+HTTP response 400 otherwise
+
+
+/backend/user/login (POST)
+-arguments:
+username (username to login)
+password (password to login)
+
+-response:
+HTTP response 200 if login is successful
+HTTP response 400 otherwise
+
+
+/backend/user/logout (POST)
+-no arguments, requires session to be authenticated
+-returns HTTP response 200 if successful

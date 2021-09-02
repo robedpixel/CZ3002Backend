@@ -3,6 +3,7 @@
 !/.gitignore
 !/environment.yml
 !/README.md
+!/REST API.txt
 !/SetupCondaEnv.bat
 !/SetupCondaEnv.sh
 !/databaseinfo.txt
