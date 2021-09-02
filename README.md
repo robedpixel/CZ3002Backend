@@ -2,9 +2,9 @@
 Django Backend server for CZ3002 project
 
 # prerequisites
-1.Miniconda installed to user folder
-2.PostgreSQL with ip/port at localhost:5432
-3.SQL Account with (username: user) and (password: userpassword)
+1. Miniconda installed to user folder
+2. PostgreSQL with ip/port at localhost:5432
+3. SQL Account with (username: user) and (password: userpassword)
 
 # Setting up development environment
 1.Run SetupCondaEnv.bat to setup the CZ3002 anaconda environment
