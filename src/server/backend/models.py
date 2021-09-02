@@ -7,6 +7,7 @@ class User(models.Model):
     role = models.PositiveSmallIntegerField()
     username = models.TextField()
     password = models.TextField()
+    displayname = models.TextField()
 
 
 class Question(models.Model):
