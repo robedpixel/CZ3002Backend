@@ -7,7 +7,7 @@ Django Backend server for CZ3002 project
 3. SQL Account with (username: user) and (password: userpassword)
 
 # Setting up development environment
-1.Run SetupCondaEnv.bat to setup the CZ3002 anaconda environment
+1. Run SetupCondaEnv.bat to setup the CZ3002 anaconda environment
 
 # Running the server
 1. Ensure that PostgreSQL is running
