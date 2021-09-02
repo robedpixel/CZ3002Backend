@@ -11,11 +11,10 @@ class User(models.Model):
 
 class Question(models.Model):
     questionid = models.SmallAutoField(primary_key=True)
-    qnimg = models.BinaryField()
-    qnansimg1 = models.BinaryField()
-    qnansimg2 = models.BinaryField()
-    qnansimg3 = models.BinaryField()
-    qnansimg4 = models.BinaryField()
+    qnimg1 = models.BinaryField()
+    qnimg2 = models.BinaryField()
+    answer = models.BooleanField()
+    difficulty = models.PositiveSmallIntegerField()
 
 
 class Userassignment(models.Model):
