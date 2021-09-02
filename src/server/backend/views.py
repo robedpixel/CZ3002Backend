@@ -3,13 +3,13 @@ import uuid
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password, check_password
-from .models import User
+from .models import User, Userassignment
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 
 # Create your views here.
 def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    return HttpResponse("Hello, world. You're at the backend index.")
 
 
 @ensure_csrf_cookie
@@ -21,6 +21,7 @@ def createuser(request):
         except KeyError:
             return HttpResponse("Please log in to create accounts", status=400)
         currentrole = int(request.session['role'])
+        received_json_data=json.loads(request.body)
         username = request.POST.get('username')
         password = request.POST.get('password')
         role = request.POST.get('role')
@@ -52,6 +53,7 @@ def createuser(request):
 
 def auth_user(request):
     if request.method == 'POST':
+        received_json_data=json.loads(request.body)
         username = request.POST.get('username')
         password = request.POST.get('password')
         database_acc_search = User.objects.filter(username=username)
@@ -59,7 +61,7 @@ def auth_user(request):
             matchcheck = check_password(password, database_acc_search[0].password)
             if matchcheck:
                 request.session['authenticated'] = True
-                request.session['username'] = username
+                request.session['uuid'] = database_acc_search[0].users
                 request.session['role'] = database_acc_search[0].role
                 return HttpResponse(status=200)
     return HttpResponse(status=400)
@@ -73,3 +75,18 @@ def logout_user(request):
                 return HttpResponse(status=200)
         except KeyError:
             return HttpResponse(status=400)
+
+        
+def get_user_questions(request):
+    if request.method == 'GET':
+        try:
+            if request.session['authenticated']:
+        error KeyError:
+            return HttpResponse("Please Login", status = 400)
+        user_uuid = request.session['uuid']
+        database_assigned_questions = Userassignment()
+        saved_assignment = database_assigned_questions.objects.filter(userid=user_uuid)
+        if saved_assignment:
+            #return json with questions ids
+        else:
+            return HttpResponse("user has no assigned questions!",status=400)
