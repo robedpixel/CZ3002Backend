@@ -11,6 +11,7 @@ backend_user:
 -role(tinyint)
 -username(varchar) (unique key)
 -password(varchar)
+-displayname(varchar)
 
 backend_userassignment:
 -userid(UUID)
