@@ -32,12 +32,15 @@ def createuser(request):
                     saved_user = User()
                     password_hash = make_password(password)
                     uuid_generated = False
+
+                    # Generate for uuid and check if it already exists, if it does generate a new one
                     while not uuid_generated:
                         user_uuid = uuid.uuid4()
                         database_uuid = User.objects.filter(uuid=user_uuid)
                         if not database_uuid:
                             saved_user.uuid = user_uuid
                             uuid_generated = True
+                    # Verify that the role is valid
                     if 0 <= role <= 2:
                         saved_user.role = role
                     else:
@@ -96,8 +99,7 @@ def auth_user(request):
                 request.session['authenticated'] = True
                 request.session['uuid'] = str(database_acc_search[0].uuid)
                 request.session['role'] = database_acc_search[0].role
-                response = {}
-                return JsonResponse(response, status=200)
+                return HttpResponse(status=200)
     return HttpResponse(status=400)
 
 
