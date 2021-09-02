@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password, check_password
 from .models import User, Userassignment
 from django.views.decorators.csrf import ensure_csrf_cookie
-
+import json
 
 # Create your views here.
 def index(request):
@@ -20,12 +20,12 @@ def createuser(request):
                 return HttpResponse("invalid permissions", status=400)
         except KeyError:
             return HttpResponse("Please log in to create accounts", status=400)
-        currentrole = int(request.session['role'])
+        current_role = int(request.session['role'])
         received_json_data=json.loads(request.body)
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        role = request.POST.get('role')
-        if role < currentrole or role == 2:
+        username = received_json_data['username']
+        password = received_json_data['password']
+        role = received_json_data['role']
+        if role < current_role or role == 2:
             if not User.objects.filter(username=username):
                 if username is not None and password is not None and role is not None:
                     saved_user = User()
@@ -35,7 +35,7 @@ def createuser(request):
                         user_uuid = uuid.uuid4()
                         database_uuid = User.objects.filter(users=user_uuid)
                         if not database_uuid:
-                            saved_user.users = user_uuid
+                            saved_user.uuid = user_uuid
                             uuid_generated = True
 
                     saved_user.role = int(role)
@@ -54,14 +54,14 @@ def createuser(request):
 def auth_user(request):
     if request.method == 'POST':
         received_json_data=json.loads(request.body)
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        username = received_json_data['username']
+        password = received_json_data['password']
         database_acc_search = User.objects.filter(username=username)
         if database_acc_search is not None:
             matchcheck = check_password(password, database_acc_search[0].password)
             if matchcheck:
                 request.session['authenticated'] = True
-                request.session['uuid'] = database_acc_search[0].users
+                request.session['uuid'] = str(database_acc_search[0].uuid)
                 request.session['role'] = database_acc_search[0].role
                 return HttpResponse(status=200)
     return HttpResponse(status=400)
@@ -81,12 +81,14 @@ def get_user_questions(request):
     if request.method == 'GET':
         try:
             if request.session['authenticated']:
-        error KeyError:
+                print("test")
+        except KeyError:
             return HttpResponse("Please Login", status = 400)
         user_uuid = request.session['uuid']
         database_assigned_questions = Userassignment()
         saved_assignment = database_assigned_questions.objects.filter(userid=user_uuid)
         if saved_assignment:
             #return json with questions ids
+            print("test")
         else:
             return HttpResponse("user has no assigned questions!",status=400)

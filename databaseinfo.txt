@@ -8,7 +8,7 @@ Tables:
 
 backend_user:
 -uuid(UUID) (primary key)
--role(tinyint)
+-role(smallint)
 -username(varchar) (unique key)
 -password(varchar)
 -displayname(varchar)
@@ -22,4 +22,4 @@ backend_question:
 -qnimg1(bytea)
 -qnimg2(bytea)
 -answer(boolean)
--difficulty(tinyint)
+-difficulty(smallint)
