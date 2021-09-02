@@ -18,8 +18,7 @@ backend_userassignment:
 
 backend_question:
 -questionid(smallserial)
--qnimg(bytea)
--qnansimg1(bytea)
--qnansimg2(bytea)
--qnansimg3(bytea)
--qnansimg4(bytea)
+-qnimg1(bytea)
+-qnimg2(bytea)
+-answer(boolean)
+-difficulty(tinyint)
