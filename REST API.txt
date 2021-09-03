@@ -39,6 +39,34 @@ json with fields:
 questions (array of questionids)
 
 
+/backend/question/assign/create (POST) # For creating user assignments for user
+-arguments:
+sessionid cookie
+userid (uuid of user to create questions for)
+questions (array of questionids to assign to user)
+
+-response:
+returns HTTP response 200 if successful
+json with fields:
+questions (array of questionids)
+
+
+/backend/question/get (GET) # For getting question info 
+-arguments:
+sessionid cookie
+
+questionid (questionid of question to retrieve)
+
+-response:
+returns HTTP response 200 if successful
+json with fields:
+questionid
+answer
+difficulty
+qnimg1
+qnimg2
+
+
 /backend/question/create (POST) # For creating an empty question in the system
 -arguments:
 sessionid cookie
@@ -52,10 +80,26 @@ returns HTTP response 200 if successful
 sessionid cookie
 
 questionid(id of question)
-qnimg1(base64 encoded jpg image)(optional)(set to DELETE to delete current data)
-qnimg2(base64 encoded jpg image)(optional)(set to DELETE to delete current data)
-answer(boolean for whether images are similar)(optional)(set to DELETE to delete current data)
-difficulty(positive number from 0 to 32767 inclusive)(optional)(set to DELETE to delete current data)
+qnimg1(base64 encoded jpg image)(optional)
+qnimg2(base64 encoded jpg image)(optional)
+answer(boolean for whether images are similar)(optional)
+difficulty(positive number from 0 to 32767 inclusive)(optional)
 
 -response:
 returns HTTP response 200 if successful
+
+
+/backend/question//assign/get (GET) # For getting user assignments
+-arguments:
+sessionid cookie
+
+questionid (questionid of question to retrieve)
+
+-response:
+returns HTTP response 200 if successful
+json with fields:
+questionid
+answer
+difficulty
+qnimg1
+qnimg2

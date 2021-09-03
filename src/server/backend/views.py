@@ -5,6 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.hashers import make_password, check_password
 from .models import User, Userassignment, Question
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.forms.models import model_to_dict
 import json, base64
 
 
@@ -175,6 +176,24 @@ def get_user_assignment(request):
             return HttpResponse("Please Login", status=400)
 
 
+def get_question(request):
+    if request.method == 'GET':
+        try:
+            if request.session['authenticated']:
+                questionid = request.GET.get("questionid")
+                if questionid:
+                    searched_question = Question.objects.filter(questionid=questionid)
+                    if searched_question:
+                        saved_question = searched_question[0]
+                        temp_dict_obj = model_to_dict(saved_question)
+                        temp_dict_obj['qnimg1'] = base64.b64encode(saved_question.qnimg1).decode("utf-8")
+                        temp_dict_obj['qnimg2'] = base64.b64encode(saved_question.qnimg2).decode("utf-8")
+                        return JsonResponse(temp_dict_obj, status=200)
+                return HttpResponse("no question found",status=400)
+        except KeyError:
+            return HttpResponse("Please Login", status=400)
+
+
 def create_question(request):
     if request.method == 'POST':
         try:
@@ -189,7 +208,6 @@ def create_question(request):
             return HttpResponse("Please Login", status=400)
 
 
-# TODO
 def update_question(request):
     print("unfinished")
     if request.method == 'POST':
@@ -198,6 +216,8 @@ def update_question(request):
                 if int(request.session['role']) >= 1:
                     received_json_data = json.loads(request.body)
                     saved_question = Question()
+                    response = {}
+                    response['updated'] = []
                     try:
                         questionid = received_json_data['questionid']
                         searched_question = Question.objects.filter(questionid=questionid)
@@ -212,10 +232,11 @@ def update_question(request):
                                 if qnimg1:
                                     if qnimg1 == "DELETE":
                                         saved_question.qnimg1 = None
-                                        question_updated = True
+
                                     else:
                                         saved_question.qnimg1 = base64.b64decode(qnimg1)
-                                        question_updated = True
+                                    response['updated'].append("qnimg1")
+                                    question_updated = True
                                 else:
                                     pass
                             except KeyError:
@@ -227,10 +248,11 @@ def update_question(request):
                                 if qnimg2:
                                     if qnimg2 == "DELETE":
                                         saved_question.qnimg2 = None
-                                        question_updated = True
+
                                     else:
                                         saved_question.qnimg2 = base64.b64decode(qnimg2)
-                                        question_updated = True
+                                    response['updated'].append("qnimg2")
+                                    question_updated = True
                                 else:
                                     pass
                             except KeyError:
@@ -242,17 +264,37 @@ def update_question(request):
                                 if answer:
                                     if answer == "DELETE":
                                         saved_question.answer = None
-                                        question_updated = True
                                     else:
                                         saved_question.answer = bool(answer)
-                                        question_updated = True
+                                    response['updated'].append("answer")
+                                    question_updated = True
                                 else:
                                     pass
                             except KeyError:
                                 pass
+
+                            # Update for difficulty
+                            try:
+                                difficulty = received_json_data['difficulty']
+                                if difficulty:
+                                    if difficulty == "DELETE":
+                                        saved_question.difficulty = None
+                                        question_updated = True
+                                    else:
+                                        if 0 <= difficulty <= 32767:
+                                            saved_question.difficulty = int(difficulty)
+                                            response['updated'].append("difficulty")
+                                            question_updated = True
+                                        else:
+                                            print("difficulty too large")
+                                else:
+                                    pass
+                            except KeyError:
+                                pass
+
                             if question_updated:
                                 saved_question.save()
-                                return HttpResponse(questionid, status=200)
+                                return JsonResponse(response, status=200)
                             return HttpResponse("no updates for question specified", status=200)
                     except KeyError:
                         return HttpResponse("no questionid specified!", status=400)
