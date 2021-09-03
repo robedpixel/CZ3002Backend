@@ -205,6 +205,8 @@ def update_question(request):
                             # Update all columns for all present params
                             question_updated = False
                             saved_question.questionid = questionid
+
+                            # Update for qnimg1
                             try:
                                 qnimg1 = received_json_data['qnimg1']
                                 if qnimg1:
@@ -213,6 +215,36 @@ def update_question(request):
                                         question_updated = True
                                     else:
                                         saved_question.qnimg1 = base64.b64decode(qnimg1)
+                                        question_updated = True
+                                else:
+                                    pass
+                            except KeyError:
+                                pass
+
+                            # Update for qnimg2
+                            try:
+                                qnimg2 = received_json_data['qnimg2']
+                                if qnimg2:
+                                    if qnimg2 == "DELETE":
+                                        saved_question.qnimg2 = None
+                                        question_updated = True
+                                    else:
+                                        saved_question.qnimg2 = base64.b64decode(qnimg2)
+                                        question_updated = True
+                                else:
+                                    pass
+                            except KeyError:
+                                pass
+
+                            # Update for answer
+                            try:
+                                answer = received_json_data['answer']
+                                if answer:
+                                    if answer == "DELETE":
+                                        saved_question.answer = None
+                                        question_updated = True
+                                    else:
+                                        saved_question.answer = bool(answer)
                                         question_updated = True
                                 else:
                                     pass
