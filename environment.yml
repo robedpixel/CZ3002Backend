@@ -9,3 +9,4 @@ dependencies:
   - Werkzeug=2.0.1
   - pyOpenSSL=20.0.1
   - psycopg2=2.9.1
+  - argon2_cffi=19.1.0
