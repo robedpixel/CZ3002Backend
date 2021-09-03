@@ -21,3 +21,12 @@ class Question(models.Model):
 class Userassignment(models.Model):
     userid = models.UUIDField(primary_key=True, editable=False)
     questions = models.TextField()
+
+
+class Result(models.Model):
+    resultid = models.AutoField(primary_key=True, editable=False)
+    userid = models.UUIDField(primary_key=True, editable=False)
+    qnsanswered = models.IntegerField()
+    qnscorrect = models.IntegerField()
+    attemptdatetime = models.DateTimeField()
+    completiontime = models.IntegerField()

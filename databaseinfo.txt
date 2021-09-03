@@ -23,3 +23,11 @@ backend_question:
 -qnimg2(bytea)
 -answer(boolean)
 -difficulty(smallint)
+
+backend_result:
+-resultid(serial)
+-userid(UUID)
+-qnsanswered(int)
+-qnscorrect(int)
+-attemptdatetime(timestamp)
+-completiontime(int)
