@@ -5,7 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.hashers import make_password, check_password
 from .models import User, Userassignment, Question
 from django.views.decorators.csrf import ensure_csrf_cookie
-import json
+import json, base64
 
 
 # Create your views here.
@@ -122,7 +122,7 @@ def debug_check_auth(request):
             return HttpResponse(status=400)
 
 
-def assign_user_questions(request):
+def create_user_assignment(request):
     if request.method == 'POST':
         try:
             if request.session['authenticated'] and int(request.session['role']) >= 1:
@@ -192,3 +192,39 @@ def create_question(request):
 # TODO
 def update_question(request):
     print("unfinished")
+    if request.method == 'POST':
+        try:
+            if request.session['authenticated']:
+                if int(request.session['role']) >= 1:
+                    received_json_data = json.loads(request.body)
+                    saved_question = Question()
+                    try:
+                        questionid = received_json_data['questionid']
+                        searched_question = Question.objects.filter(questionid=questionid)
+                        if searched_question:
+                            # Update all columns for all present params
+                            question_updated = False
+                            saved_question.questionid = questionid
+                            try:
+                                qnimg1 = received_json_data['qnimg1']
+                                if qnimg1:
+                                    if qnimg1 == "DELETE":
+                                        saved_question.qnimg1 = None
+                                        question_updated = True
+                                    else:
+                                        saved_question.qnimg1 = base64.b64decode(qnimg1)
+                                        question_updated = True
+                                else:
+                                    pass
+                            except KeyError:
+                                pass
+                            if question_updated:
+                                saved_question.save()
+                                return HttpResponse(questionid, status=200)
+                            return HttpResponse("no updates for question specified", status=200)
+                    except KeyError:
+                        return HttpResponse("no questionid specified!", status=400)
+                else:
+                    return HttpResponse("Invalid permissions!", status=400)
+        except KeyError:
+            return HttpResponse("Please Login", status=400)

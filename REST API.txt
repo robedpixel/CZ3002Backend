@@ -45,3 +45,17 @@ sessionid cookie
 
 -response:
 returns HTTP response 200 if successful
+
+
+/backend/question/update (POST) # For updating a question in the system
+-arguments:
+sessionid cookie
+
+questionid(id of question)
+qnimg1(base64 encoded jpg image)(optional)(set to DELETE to delete current data)
+qnimg2(base64 encoded jpg image)(optional)(set to DELETE to delete current data)
+answer(boolean for whether images are similar)(optional)(set to DELETE to delete current data)
+difficulty(positive number from 0 to 32767 inclusive)(optional)(set to DELETE to delete current data)
+
+-response:
+returns HTTP response 200 if successful
