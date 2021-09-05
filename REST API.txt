@@ -89,7 +89,7 @@ difficulty(positive number from 0 to 32767 inclusive)(optional)
 returns HTTP response 200 if successful
 
 
-/backend/question//assign/get (GET) # For getting user assignments
+/backend/question/assign/get (GET) # For getting user assignments
 -arguments:
 sessionid cookie
 
@@ -103,3 +103,12 @@ answer
 difficulty
 qnimg1
 qnimg2
+
+/backend/question/result/create (POST) # For getting user assignments
+-arguments:
+sessionid cookie
+
+userid (userid of result to create)
+
+-response:
+returns HTTP response 201 if successful
