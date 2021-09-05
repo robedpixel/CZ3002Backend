@@ -104,7 +104,7 @@ difficulty
 qnimg1
 qnimg2
 
-/backend/question/result/create (POST) # For getting user assignments
+/backend/question/result/create (POST) # For creating new result entries
 -arguments:
 sessionid cookie
 
@@ -112,3 +112,23 @@ userid (userid of result to create)
 
 -response:
 returns HTTP response 201 if successful
+
+
+/backend/question/result/multi/get (POST) # For getting all the results for a user
+-arguments:
+sessionid cookie
+
+userid (userid of results to retrieve)
+
+-response:
+returns HTTP response 200 if successful
+json with fields:
+results (array of results)
+
+-result format:
+resultid
+userid
+qnsanswered
+qnscorrect
+attemptdatetime
+completiontime

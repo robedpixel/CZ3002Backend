@@ -7,6 +7,7 @@ from .models import User, Userassignment, Question, Result
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.forms.models import model_to_dict
 import json, base64
+from django.core import serializers
 
 
 # Create your views here.
@@ -316,6 +317,23 @@ def create_new_result(request):
                         saved_result.userid = userid
                         saved_result.save()
                         return HttpResponse(status=201)
+                    return HttpResponse("userid not found.", status=400)
+                else:
+                    return HttpResponse("Invalid permissions!", status=400)
+        except KeyError:
+            return HttpResponse("Please Login", status=400)
+
+
+def get_result_multi(request):
+    if request.method == 'GET':
+        try:
+            if request.session['authenticated']:
+                if int(request.session['role']) >= 1:
+                    userid = request.GET.get('userid')
+                    saved_result = Result.objects.filter(userid=userid)
+                    if saved_result:
+                        response = list(saved_result.values())
+                        return JsonResponse({'results': response}, status=200)
                     return HttpResponse("userid not found.", status=400)
                 else:
                     return HttpResponse("Invalid permissions!", status=400)
