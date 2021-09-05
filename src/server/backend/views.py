@@ -3,7 +3,7 @@ import uuid
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.hashers import make_password, check_password
-from .models import User, Userassignment, Question
+from .models import User, Userassignment, Question, Result
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.forms.models import model_to_dict
 import json, base64
@@ -189,7 +189,7 @@ def get_question(request):
                         temp_dict_obj['qnimg1'] = base64.b64encode(saved_question.qnimg1).decode("utf-8")
                         temp_dict_obj['qnimg2'] = base64.b64encode(saved_question.qnimg2).decode("utf-8")
                         return JsonResponse(temp_dict_obj, status=200)
-                return HttpResponse("no question found",status=400)
+                return HttpResponse("no question found", status=400)
         except KeyError:
             return HttpResponse("Please Login", status=400)
 
@@ -209,7 +209,6 @@ def create_question(request):
 
 
 def update_question(request):
-    print("unfinished")
     if request.method == 'POST':
         try:
             if request.session['authenticated']:
@@ -298,6 +297,26 @@ def update_question(request):
                             return HttpResponse("no updates for question specified", status=200)
                     except KeyError:
                         return HttpResponse("no questionid specified!", status=400)
+                else:
+                    return HttpResponse("Invalid permissions!", status=400)
+        except KeyError:
+            return HttpResponse("Please Login", status=400)
+
+
+def create_new_result(request):
+    if request.method == 'POST':
+        try:
+            if request.session['authenticated']:
+                if int(request.session['role']) >= 1:
+                    received_json_data = json.loads(request.body)
+                    saved_result = Result()
+                    userid = received_json_data['userid']
+                    saved_assignment = Userassignment.objects.filter(userid=userid)
+                    if saved_assignment:
+                        saved_result.userid = userid
+                        saved_result.save()
+                        return HttpResponse(status=201)
+                    return HttpResponse("userid not found.", status=400)
                 else:
                     return HttpResponse("Invalid permissions!", status=400)
         except KeyError:

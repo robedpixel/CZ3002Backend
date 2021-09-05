@@ -12,5 +12,6 @@ urlpatterns = [
     path('question/create', csrf_exempt(views.create_question), name='create_question'),
     path('question/update', csrf_exempt(views.update_question), name='update_question'),
     path('question/assign/get', csrf_exempt(views.get_user_assignment), name='get_user_assignment'),
-    path('question/assign/create', csrf_exempt(views.create_user_assignment), name='create_user_assignment')
+    path('question/assign/create', csrf_exempt(views.create_user_assignment), name='create_user_assignment'),
+    path('question/result/create', csrf_exempt(views.create_new_result), name='create_new_result')
 ]

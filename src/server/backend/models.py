@@ -25,8 +25,11 @@ class Userassignment(models.Model):
 
 class Result(models.Model):
     resultid = models.AutoField(primary_key=True, editable=False)
-    userid = models.UUIDField(primary_key=True, editable=False)
+    userid = models.UUIDField(editable=False)
     qnsanswered = models.IntegerField()
     qnscorrect = models.IntegerField()
     attemptdatetime = models.DateTimeField()
     completiontime = models.IntegerField()
+
+    class Meta:
+        unique_together = (('resultid', 'userid'),)
