@@ -28,6 +28,43 @@ sessionid cookie
 returns HTTP response 200 if successful
 
 
+/backend/user/get (GET) # For getting user info
+-arguments:
+sessionid cookie
+
+userid (uuid of user to get info from)
+
+-response:
+returns HTTP response 200 if successful
+json with fields:
+users (array of Users)
+
+-response:
+returns HTTP response 200 if successful
+json with fields:
+users (array of Users)
+
+-User format:
+username (username of user)
+displaynane (display name of user)
+
+
+/backend/user/multi/get (GET) # For listing users in system (only allowed to medical staff and above)
+-arguments:
+sessionid cookie
+
+role (role of users to list)
+
+-response:
+returns HTTP response 200 if successful
+json with fields:
+users (array of Users)
+
+-User format:
+uuid (uuid of user)
+username (username of user)
+displaynane (display name of user)
+
 /backend/question/assign/get (GET) # For getting question sets for user
 -arguments:
 sessionid cookie
@@ -36,6 +73,10 @@ userid (uuid of user to retrieve questions from)
 -response:
 returns HTTP response 200 if successful
 json with fields:
+assignments (array of userassignments)
+
+-userassignment format:
+userid
 questions (array of questionids)
 
 

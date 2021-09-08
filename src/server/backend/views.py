@@ -115,6 +115,45 @@ def logout_user(request):
             return HttpResponse(status=400)
 
 
+def get_info_user(request):
+    if request.method == 'GET':
+        try:
+            if request.session['authenticated']:
+                user_uuid = request.GET.get('userid')
+                saved_user = User.objects.filter(uuid=user_uuid).values()
+                # Filter out password hash and role from the model before sending it
+                response_list = []
+                for user in saved_user:
+                    diction = dict((key, value) for key, value in user.items() if
+                                   key == 'username' or key == 'displayname')
+                    response_list.append(diction)
+
+                return JsonResponse({'users': response_list}, status=200)
+        except KeyError:
+            return HttpResponse("Please Login", status=400)
+
+
+def get_info_user_multi(request):
+    if request.method == 'GET':
+        try:
+            if request.session['authenticated']:
+                if int(request.session['role']) >= 1:
+                    users_role = request.GET.get('role')
+                    saved_users = User.objects.filter(role=users_role).values()
+                    response_list = []
+                    # Filter out password hash and role from the model before sending it
+                    for user in saved_users:
+                        diction = dict((key, value) for key, value in user.items() if
+                                       key == "uuid" or key == 'username' or key == 'displayname')
+                        response_list.append(diction)
+
+                    return JsonResponse({'users': response_list}, status=200)
+                else:
+                    return HttpResponse("Invalid permissions!", status=400)
+        except KeyError:
+            return HttpResponse("Please Login", status=400)
+
+
 def debug_check_auth(request):
     if request.method == 'POST':
         try:
@@ -130,7 +169,6 @@ def create_user_assignment(request):
             if request.session['authenticated'] and int(request.session['role']) >= 1:
                 received_json_data = json.loads(request.body)
                 if received_json_data:
-                    saved_user = User()
                     userid = received_json_data['userid']
                     database_uuid = User.objects.filter(uuid=userid)
                     if not database_uuid:
@@ -166,10 +204,8 @@ def get_user_assignment(request):
                     # return json with questions ids
 
                     # Get list of ids from database
-                    questions = json.loads(saved_assignment[0].questions)
-                    json_data = {}
-                    json_data['questions'] = questions
-                    return JsonResponse(json_data, status=200)
+                    response = list(saved_assignment.values())
+                    return JsonResponse({'assignments': response}, status=200)
 
                 else:
                     return HttpResponse("user has no assigned questions!", status=400)
