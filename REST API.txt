@@ -1,3 +1,15 @@
+CONSTANTS:
+
+DIFFICULTY_HARD = 2
+DIFFICULTY_MEDIUM = 1
+DIFFICULTY_EASY = 0
+ROLE_ADMIN = 2
+ROLE_STAFF = 1
+ROLE_USER = 0
+
+
+PATHS:
+
 /backend/user/create (POST) # For creating user accounts
 -arguments:
 sessionid cookie
@@ -128,6 +140,25 @@ difficulty(positive number from 0 to 32767 inclusive)(optional)
 
 -response:
 returns HTTP response 200 if successful
+
+
+/backend/question/multi/get (GET) # For getting multiple question info 
+-arguments:
+sessionid cookie
+
+difficulty (difficulty in int to retrieve, retrieves all questions if empty)
+
+-response:
+returns HTTP response 200 if successful
+json with fields:
+questions (array of questions)
+
+-Question format:
+questionid
+answer
+difficulty
+qnimg1 (jpg in base64)
+qnimg2 (jpg in base64)
 
 
 /backend/question/assign/get (GET) # For getting user assignments

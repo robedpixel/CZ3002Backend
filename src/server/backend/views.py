@@ -340,6 +340,27 @@ def update_question(request):
             return HttpResponse("Please Login", status=400)
 
 
+def get_question_multi(request):
+    if request.method == 'GET':
+        try:
+            if request.session['authenticated']:
+                difficulty = request.GET.get("difficulty")
+                if difficulty:
+                    int_difficulty = int(difficulty)
+                    searched_question = Question.objects.filter(difficulty=int_difficulty)
+                else:
+                    searched_question = Question.objects.all()
+                response = []
+                for question in searched_question:
+                    temp_dict_obj = model_to_dict(question)
+                    temp_dict_obj['qnimg1'] = base64.b64encode(question.qnimg1).decode("utf-8")
+                    temp_dict_obj['qnimg2'] = base64.b64encode(question.qnimg2).decode("utf-8")
+                    response.append(temp_dict_obj)
+                return JsonResponse({'questions': response}, status=200)
+        except KeyError:
+            return HttpResponse("Please Login", status=400)
+
+
 def create_new_result(request):
     if request.method == 'POST':
         try:
