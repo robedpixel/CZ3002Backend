@@ -6,9 +6,9 @@ from django.contrib.auth.hashers import make_password, check_password
 from .models import User, Userassignment, Question, Result
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.forms.models import model_to_dict
-import json, base64
+import json, base64, pytz
 from django.core import serializers
-
+from datetime import datetime
 
 # Create your views here.
 def index(request):
@@ -206,6 +206,62 @@ def get_user_assignment(request):
                     # Get list of ids from database
                     response = list(saved_assignment.values())
                     return JsonResponse({'assignments': response}, status=200)
+
+                else:
+                    return HttpResponse("user has no assigned questions!", status=400)
+        except KeyError:
+            return HttpResponse("Please Login", status=400)
+
+
+def start_user_assignment(request):
+    if request.method == 'POST':
+        try:
+            if request.session['authenticated']:
+                received_json_data = json.loads(request.body)
+                assignment_id = received_json_data['assignmentid']
+                saved_assignment = Userassignment.objects.filter(assignmentid=int(assignment_id))
+                if saved_assignment:
+                    # return json with questions ids
+
+                    # Get list of ids from database
+                    response = list(saved_assignment.values())
+                    rand_token = uuid.uuid4()
+                    saved_assignment[0].anstoken = rand_token
+                    saved_assignment[0].save()
+                    result = Result()
+                    result.userid = saved_assignment[0].userid
+                    result.attemptdatetime = pytz.utz.localize(datetime.now())
+                    result.resultid = saved_assignment[0].assignmentid
+                    result.save()
+                    return JsonResponse({'assignments': response, 'anstoken': str(rand_token)}, status=200)
+
+                else:
+                    return HttpResponse("user has no assigned questions!", status=400)
+        except KeyError:
+            return HttpResponse("Please Login", status=400)
+
+
+# TODO
+def complete_user_assignment(request):
+    if request.method == 'POST':
+        try:
+            if request.session['authenticated']:
+                received_json_data = json.loads(request.body)
+                anstoken = received_json_data['anstoken']
+                assignment_id = received_json_data['assignmentid']
+                answers = received_json_data['answers']
+                saved_assignment = Userassignment.objects.filter(assignmentid=int(assignment_id))
+                if saved_assignment:
+                    if saved_assignment[0].anstoken == uuid.UUID(anstoken):
+                        print(answers)
+                        # Add result to results
+                        # result = Result()
+                        # result.userid = saved_assignment[0].userid
+                        # remove user assignment
+                        print("unfinsihed")
+                        return HttpResponse(status=200)
+                    else:
+                        return HttpResponse(status=400)
 
                 else:
                     return HttpResponse("user has no assigned questions!", status=400)

@@ -14,18 +14,20 @@ backend_user:
 -displayname(varchar)
 
 backend_userassignment:
+-assignmentid(serial) (primary key)
 -userid(UUID)
--questions(varchar) (use Python pickle to serialise/deserialise data into list)
+-questions(varchar) (use Python json.dumps/loads to serialise/deserialise data into list)
+-anstoken(UUID)
 
 backend_question:
--questionid(smallserial)
+-questionid(smallserial) (primary key)
 -qnimg1(bytea)
 -qnimg2(bytea)
 -answer(boolean)
 -difficulty(smallint)
 
 backend_result:
--resultid(serial)
+-resultid(int) (primary key)
 -userid(UUID)
 -qnsanswered(int)
 -qnscorrect(int)

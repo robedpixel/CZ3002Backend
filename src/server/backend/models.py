@@ -19,12 +19,14 @@ class Question(models.Model):
 
 
 class Userassignment(models.Model):
-    userid = models.UUIDField(primary_key=True, editable=False)
+    assignmentid = models.AutoField(primary_key=True, editable=False)
+    userid = models.UUIDField(editable=False)
     questions = models.TextField()
+    anstoken = models.UUIDField()
 
 
 class Result(models.Model):
-    resultid = models.AutoField(primary_key=True, editable=False)
+    resultid = models.IntegerField(primary_key=True, editable=False)
     userid = models.UUIDField(editable=False)
     qnsanswered = models.IntegerField()
     qnscorrect = models.IntegerField()
