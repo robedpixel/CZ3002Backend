@@ -6,7 +6,8 @@ DIFFICULTY_EASY = 0
 ROLE_ADMIN = 2
 ROLE_STAFF = 1
 ROLE_USER = 0
-
+BOOL_TRUE = 1
+BOOL_FALSE = 0
 
 PATHS:
 
@@ -104,6 +105,34 @@ json with fields:
 questions (array of questionids)
 
 
+/backend/question/assign/start (POST) # For starting assignments for user
+-arguments:
+sessionid cookie
+assignmentid (assignmentid of assignment to start)
+
+-response:
+returns HTTP response 200 if successful
+json with fields:
+assignments (assignment object)
+
+-assignment format:
+assignmentid (unique id of assignment)
+userid (userid of assignment)
+questions (array of questionids for assignment)
+anstoken (uuid to return when completing assignment)
+
+
+/backend/question/assign/complete (POST) # For completing assignments for user
+-arguments:
+sessionid cookie
+assignmentid (id of assignment to complete)
+anstoken (uuid of token from start assignment)
+answers (array of bools in int form for user's answers)
+
+-response:
+returns HTTP response 200 if successful
+
+
 /backend/question/get (GET) # For getting question info 
 -arguments:
 sessionid cookie
@@ -165,16 +194,17 @@ qnimg2 (jpg in base64)
 -arguments:
 sessionid cookie
 
-questionid (questionid of question to retrieve)
+userid (userid of question assignments to retrieve)
 
 -response:
 returns HTTP response 200 if successful
-json with fields:
-questionid
-answer
-difficulty
-qnimg1
-qnimg2
+assignments (array of assignments)
+
+-assignment format:
+assignmentid (unique id of assignment)
+userid (userid of assignment)
+questions (array of questionids for assignment)
+anstoken (uuid to return when completing assignment, empty until complete assignment function is called)
 
 /backend/question/result/create (POST) # For creating new result entries
 -arguments:

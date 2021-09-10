@@ -225,16 +225,16 @@ def start_user_assignment(request):
                     # return json with questions ids
 
                     # Get list of ids from database
-                    response = list(saved_assignment.values())
                     rand_token = uuid.uuid4()
                     saved_assignment[0].anstoken = rand_token
                     saved_assignment[0].save()
+                    response = list(saved_assignment.values())
                     result = Result()
                     result.userid = saved_assignment[0].userid
-                    result.attemptdatetime = pytz.utz.localize(datetime.now())
+                    result.attemptdatetime = pytz.utc.localize(datetime.now())
                     result.resultid = saved_assignment[0].assignmentid
                     result.save()
-                    return JsonResponse({'assignments': response, 'anstoken': str(rand_token)}, status=200)
+                    return JsonResponse({'assignments': response}, status=200)
 
                 else:
                     return HttpResponse("user has no assigned questions!", status=400)
