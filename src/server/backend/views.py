@@ -10,6 +10,7 @@ import json, base64, pytz
 from django.core import serializers
 from datetime import datetime
 
+
 # Create your views here.
 def index(request):
     return HttpResponse("Hello, world. You're at the backend index.")
@@ -241,7 +242,6 @@ def start_user_assignment(request):
             return HttpResponse("Please Login", status=400)
 
 
-# TODO
 def complete_user_assignment(request):
     if request.method == 'POST':
         try:
@@ -253,15 +253,29 @@ def complete_user_assignment(request):
                 saved_assignment = Userassignment.objects.filter(assignmentid=int(assignment_id))
                 if saved_assignment:
                     if saved_assignment[0].anstoken == uuid.UUID(anstoken):
-                        print(answers)
+                        questions = json.loads(saved_assignment[0].questions)
+                        assignment_questions_list = []
+                        correct_answers_list = []
+                        for question in questions:
+                            assignment_questions_list.append(int(question))
+                        question_info = Question.objects.filter(questionid__in=assignment_questions_list)
+                        for question in question_info:
+                            correct_answers_list.append(int(question.answer))
                         # Add result to results
-                        # result = Result()
-                        # result.userid = saved_assignment[0].userid
+                        result = Result.objects.get(resultid=saved_assignment[0].assignmentid)
+                        result.qnsanswered = len(assignment_questions_list)
+                        qns_correct = 0
+                        for ans, correct_ans in zip(answers, correct_answers_list):
+                            if int(ans) == correct_ans:
+                                qns_correct = qns_correct + 1
+                        result.qnscorrect = qns_correct
+                        result.completiontime = int((datetime.now() - result.attemptdatetime).total_seconds())
+                        result.save()
                         # remove user assignment
-                        print("unfinsihed")
+                        saved_assignment[0].delete()
                         return HttpResponse(status=200)
                     else:
-                        return HttpResponse(status=400)
+                        return HttpResponse("incorrect token sent",status=400)
 
                 else:
                     return HttpResponse("user has no assigned questions!", status=400)
@@ -308,8 +322,7 @@ def update_question(request):
                 if int(request.session['role']) >= 1:
                     received_json_data = json.loads(request.body)
                     saved_question = Question()
-                    response = {}
-                    response['updated'] = []
+                    response = {'updated': []}
                     try:
                         questionid = received_json_data['questionid']
                         searched_question = Question.objects.filter(questionid=questionid)
