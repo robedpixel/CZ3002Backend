@@ -325,21 +325,20 @@ def update_question(request):
                     response = {'updated': []}
                     try:
                         questionid = received_json_data['questionid']
-                        searched_question = Question.objects.filter(questionid=questionid)
+                        searched_question = Question.objects.get(questionid=questionid)
                         if searched_question:
                             # Update all columns for all present params
                             question_updated = False
-                            saved_question.questionid = questionid
 
                             # Update for qnimg1
                             try:
                                 qnimg1 = received_json_data['qnimg1']
                                 if qnimg1:
                                     if qnimg1 == "DELETE":
-                                        saved_question.qnimg1 = None
+                                        searched_question.qnimg1 = None
 
                                     else:
-                                        saved_question.qnimg1 = base64.b64decode(qnimg1)
+                                        searched_question.qnimg1 = base64.b64decode(qnimg1)
                                     response['updated'].append("qnimg1")
                                     question_updated = True
                                 else:
@@ -352,10 +351,10 @@ def update_question(request):
                                 qnimg2 = received_json_data['qnimg2']
                                 if qnimg2:
                                     if qnimg2 == "DELETE":
-                                        saved_question.qnimg2 = None
+                                        searched_question.qnimg2 = None
 
                                     else:
-                                        saved_question.qnimg2 = base64.b64decode(qnimg2)
+                                        searched_question.qnimg2 = base64.b64decode(qnimg2)
                                     response['updated'].append("qnimg2")
                                     question_updated = True
                                 else:
@@ -368,9 +367,9 @@ def update_question(request):
                                 answer = received_json_data['answer']
                                 if answer:
                                     if answer == "DELETE":
-                                        saved_question.answer = None
+                                        searched_question.answer = None
                                     else:
-                                        saved_question.answer = bool(answer)
+                                        searched_question.answer = bool(answer)
                                     response['updated'].append("answer")
                                     question_updated = True
                                 else:
@@ -383,11 +382,11 @@ def update_question(request):
                                 difficulty = received_json_data['difficulty']
                                 if difficulty:
                                     if difficulty == "DELETE":
-                                        saved_question.difficulty = None
+                                        searched_question.difficulty = None
                                         question_updated = True
                                     else:
                                         if 0 <= difficulty <= 32767:
-                                            saved_question.difficulty = int(difficulty)
+                                            searched_question.difficulty = int(difficulty)
                                             response['updated'].append("difficulty")
                                             question_updated = True
                                         else:
@@ -398,7 +397,7 @@ def update_question(request):
                                 pass
 
                             if question_updated:
-                                saved_question.save()
+                                searched_question.save()
                                 return JsonResponse(response, status=200)
                             return HttpResponse("no updates for question specified", status=200)
                     except KeyError:
