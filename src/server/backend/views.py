@@ -29,7 +29,8 @@ def createuser(request):
         username = received_json_data['username']
         password = received_json_data['password']
         role = int(received_json_data['role'])
-        if role < current_role or role == 2:
+        # if role < current_role or role == 2:
+        if role < current_role or current_role == 2:
             if not User.objects.filter(username=username):
                 if username is not None and password is not None and role is not None:
                     saved_user = User()
