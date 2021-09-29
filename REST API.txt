@@ -19,7 +19,13 @@ password (password of the user to be created)
 role (role of the user to be created)
 
 -response:
+
 HTTP response 201 if creation is successful
+json with fields:
+userid (uuid of logged in user)
+role (role of logged in user)
+
+
 HTTP response 400 otherwise
 
 

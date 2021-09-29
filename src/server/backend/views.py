@@ -103,7 +103,8 @@ def auth_user(request):
                 request.session['authenticated'] = True
                 request.session['uuid'] = str(database_acc_search[0].uuid)
                 request.session['role'] = database_acc_search[0].role
-                return HttpResponse(status=200)
+                return JsonResponse({"userid": str(database_acc_search[0].uuid), "role": str(database_acc_search[0].role)},
+                                    status=200)
     return HttpResponse(status=400)
 
 
@@ -276,7 +277,7 @@ def complete_user_assignment(request):
                         saved_assignment[0].delete()
                         return HttpResponse(status=200)
                     else:
-                        return HttpResponse("incorrect token sent",status=400)
+                        return HttpResponse("incorrect token sent", status=400)
 
                 else:
                     return HttpResponse("user has no assigned questions!", status=400)
