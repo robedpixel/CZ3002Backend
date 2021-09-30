@@ -6,6 +6,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from .models import User, Userassignment, Question, Result
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.forms.models import model_to_dict
+from django.contrib.sessions.backends.db import SessionStore
 import json, base64, pytz
 from django.core import serializers
 from datetime import datetime
@@ -19,12 +20,14 @@ def index(request):
 @ensure_csrf_cookie
 def createuser(request):
     if request.method == 'POST':
+        received_json_data = json.loads(request.body)
+        sessionid = received_json_data['sessionid']
+        session = SessionStore(session_key=sessionid)
         try:
-            if request.session['role'] == 0:
+            if session['role'] == 0:
                 return HttpResponse("invalid permissions", status=400)
         except KeyError:
             return HttpResponse("Please log in to create accounts", status=400)
-        received_json_data = json.loads(request.body)
         current_role = int(request.session['role'])
         username = received_json_data['username']
         password = received_json_data['password']
@@ -100,19 +103,31 @@ def auth_user(request):
         if database_acc_search is not None:
             matchcheck = check_password(password, database_acc_search[0].password)
             if matchcheck:
-                request.session['authenticated'] = True
-                request.session['uuid'] = str(database_acc_search[0].uuid)
-                request.session['role'] = database_acc_search[0].role
-                return JsonResponse({"userid": str(database_acc_search[0].uuid), "role": str(database_acc_search[0].role)},
-                                    status=200)
+                s = SessionStore()
+                s.create()
+                s['authenticated'] = True
+                s['uuid'] = str(database_acc_search[0].uuid)
+                s['role'] = database_acc_search[0].role
+                s.save()
+                print(type(s.session_key))
+                #request.session['authenticated'] = True
+                #request.session['uuid'] = str(database_acc_search[0].uuid)
+                #request.session['role'] = database_acc_search[0].role
+                return JsonResponse(
+                    {"userid": str(database_acc_search[0].uuid), "role": str(database_acc_search[0].role),
+                     "sessionid": s.session_key},
+                    status=200)
     return HttpResponse(status=400)
 
 
 def logout_user(request):
     if request.method == 'POST':
         try:
-            if request.session['authenticated']:
-                request.session.flush()
+            received_json_data = json.loads(request.body)
+            sessionid = received_json_data['sessionid']
+            session = SessionStore(session_key=sessionid)
+            if session['authenticated']:
+                session.flush()
                 return HttpResponse(status=200)
         except KeyError:
             return HttpResponse(status=400)
@@ -121,7 +136,9 @@ def logout_user(request):
 def get_info_user(request):
     if request.method == 'GET':
         try:
-            if request.session['authenticated']:
+            sessionid = request.GET.get('sessionid')
+            session = SessionStore(session_key=sessionid)
+            if session['authenticated']:
                 user_uuid = request.GET.get('userid')
                 saved_user = User.objects.filter(uuid=user_uuid).values()
                 # Filter out password hash and role from the model before sending it
@@ -139,8 +156,10 @@ def get_info_user(request):
 def get_info_user_multi(request):
     if request.method == 'GET':
         try:
-            if request.session['authenticated']:
-                if int(request.session['role']) >= 1:
+            sessionid = request.GET.get('sessionid')
+            session = SessionStore(session_key=sessionid)
+            if session['authenticated']:
+                if int(session['role']) >= 1:
                     users_role = request.GET.get('role')
                     saved_users = User.objects.filter(role=users_role).values()
                     response_list = []
@@ -169,28 +188,27 @@ def debug_check_auth(request):
 def create_user_assignment(request):
     if request.method == 'POST':
         try:
-            if request.session['authenticated'] and int(request.session['role']) >= 1:
-                received_json_data = json.loads(request.body)
-                if received_json_data:
-                    userid = received_json_data['userid']
-                    database_uuid = User.objects.filter(uuid=userid)
-                    if not database_uuid:
-                        return HttpResponse("no user found", status=400)
-                    questions = received_json_data['questions']
-                    print(questions)
-                    # verify if input is reasonable
-                    verified = True
-                    for row in questions:
-                        if not row.isnumeric():
+            received_json_data = json.loads(request.body)
+            sessionid = received_json_data['sessionid']
+            session = SessionStore(session_key=sessionid)
+            if session['authenticated'] and int(session['role']) >= 1:
+                userid = received_json_data['userid']
+                database_uuid = User.objects.filter(uuid=userid)
+                if not database_uuid:
+                    return HttpResponse("no user found", status=400)
+                questions = received_json_data['questions']
+                print(questions)
+                # verify if input is reasonable
+                verified = True
+                for row in questions:
+                    if not row.isnumeric():
                             verified = False
-                    if verified:
-                        saved_assignment = Userassignment()
-                        saved_assignment.userid = userid
-                        saved_assignment.questions = json.dumps(questions)
-                        saved_assignment.save()
-                        return HttpResponse(status=200)
-                    else:
-                        return HttpResponse("bad input", status=400)
+                if verified:
+                    saved_assignment = Userassignment()
+                    saved_assignment.userid = userid
+                    saved_assignment.questions = json.dumps(questions)
+                    saved_assignment.save()
+                    return HttpResponse(status=200)
                 else:
                     return HttpResponse("bad input", status=400)
         except KeyError:
@@ -200,7 +218,9 @@ def create_user_assignment(request):
 def get_user_assignment(request):
     if request.method == 'GET':
         try:
-            if request.session['authenticated']:
+            sessionid = request.GET.get('sessionid')
+            session = SessionStore(session_key=sessionid)
+            if session['authenticated']:
                 user_uuid = request.GET.get('userid')
                 saved_assignment = Userassignment.objects.filter(userid=user_uuid)
                 if saved_assignment:
@@ -219,8 +239,10 @@ def get_user_assignment(request):
 def start_user_assignment(request):
     if request.method == 'POST':
         try:
-            if request.session['authenticated']:
-                received_json_data = json.loads(request.body)
+            received_json_data = json.loads(request.body)
+            sessionid = received_json_data['sessionid']
+            session = SessionStore(session_key=sessionid)
+            if session['authenticated']:
                 assignment_id = received_json_data['assignmentid']
                 saved_assignment = Userassignment.objects.filter(assignmentid=int(assignment_id))
                 if saved_assignment:
@@ -247,8 +269,10 @@ def start_user_assignment(request):
 def complete_user_assignment(request):
     if request.method == 'POST':
         try:
-            if request.session['authenticated']:
-                received_json_data = json.loads(request.body)
+            received_json_data = json.loads(request.body)
+            sessionid = received_json_data['sessionid']
+            session = SessionStore(session_key=sessionid)
+            if session['authenticated']:
                 anstoken = received_json_data['anstoken']
                 assignment_id = received_json_data['assignmentid']
                 answers = received_json_data['answers']
@@ -288,7 +312,9 @@ def complete_user_assignment(request):
 def get_question(request):
     if request.method == 'GET':
         try:
-            if request.session['authenticated']:
+            sessionid = request.GET.get('sessionid')
+            session = SessionStore(session_key=sessionid)
+            if session['authenticated']:
                 questionid = request.GET.get("questionid")
                 if questionid:
                     searched_question = Question.objects.filter(questionid=questionid)
@@ -306,8 +332,11 @@ def get_question(request):
 def create_question(request):
     if request.method == 'POST':
         try:
-            if request.session['authenticated']:
-                if int(request.session['role']) >= 1:
+            received_json_data = json.loads(request.body)
+            sessionid = received_json_data['sessionid']
+            session = SessionStore(session_key=sessionid)
+            if session['authenticated']:
+                if int(session['role']) >= 1:
                     saved_question = Question()
                     saved_question.save()
                     return HttpResponse(status=200)
@@ -320,9 +349,11 @@ def create_question(request):
 def update_question(request):
     if request.method == 'POST':
         try:
-            if request.session['authenticated']:
-                if int(request.session['role']) >= 1:
-                    received_json_data = json.loads(request.body)
+            received_json_data = json.loads(request.body)
+            sessionid = received_json_data['sessionid']
+            session = SessionStore(session_key=sessionid)
+            if session['authenticated']:
+                if int(session['role']) >= 1:
                     saved_question = Question()
                     response = {'updated': []}
                     try:
@@ -412,8 +443,10 @@ def update_question(request):
 
 def get_question_multi(request):
     if request.method == 'GET':
+        sessionid = request.GET.get('sessionid')
+        session = SessionStore(session_key=sessionid)
         try:
-            if request.session['authenticated']:
+            if session['authenticated']:
                 difficulty = request.GET.get("difficulty")
                 if difficulty:
                     int_difficulty = int(difficulty)
@@ -433,10 +466,12 @@ def get_question_multi(request):
 
 def create_new_result(request):
     if request.method == 'POST':
+        received_json_data = json.loads(request.body)
+        sessionid = received_json_data['sessionid']
+        session = SessionStore(session_key=sessionid)
         try:
-            if request.session['authenticated']:
-                if int(request.session['role']) >= 1:
-                    received_json_data = json.loads(request.body)
+            if session['authenticated']:
+                if int(session['role']) >= 1:
                     saved_result = Result()
                     userid = received_json_data['userid']
                     saved_assignment = Userassignment.objects.filter(userid=userid)
@@ -453,9 +488,11 @@ def create_new_result(request):
 
 def get_result_multi(request):
     if request.method == 'GET':
+        sessionid = request.GET.get('sessionid')
+        session = SessionStore(session_key=sessionid)
         try:
-            if request.session['authenticated']:
-                if int(request.session['role']) >= 1:
+            if session['authenticated']:
+                if int(session['role']) >= 1:
                     userid = request.GET.get('userid')
                     saved_result = Result.objects.filter(userid=userid)
                     if saved_result:

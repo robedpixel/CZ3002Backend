@@ -13,7 +13,7 @@ PATHS:
 
 /backend/user/create (POST) # For creating user accounts
 -arguments:
-sessionid cookie
+sessionid 
 username (username of the user to be created)
 password (password of the user to be created)
 role (role of the user to be created)
@@ -35,13 +35,13 @@ username (username to login)
 password (password to login)
 
 -response:
-sessionid cookie, HTTP response 200 if login is successful
+sessionid , HTTP response 200 if login is successful
 HTTP response 400 otherwise
 
 
 /backend/user/logout (POST) # For logging out of session
 -arguments:
-sessionid cookie
+sessionid
 
 -response:
 returns HTTP response 200 if successful
@@ -49,7 +49,7 @@ returns HTTP response 200 if successful
 
 /backend/user/get (GET) # For getting user info
 -arguments:
-sessionid cookie
+sessionid
 
 userid (uuid of user to get info from)
 
@@ -70,7 +70,7 @@ displaynane (display name of user)
 
 /backend/user/multi/get (GET) # For listing users in system (only allowed to medical staff and above)
 -arguments:
-sessionid cookie
+sessionid
 
 role (role of users to list)
 
@@ -86,7 +86,7 @@ displaynane (display name of user)
 
 /backend/question/assign/get (GET) # For getting question sets for user
 -arguments:
-sessionid cookie
+sessionid
 userid (uuid of user to retrieve questions from)
 
 -response:
@@ -101,7 +101,7 @@ questions (array of questionids)
 
 /backend/question/assign/create (POST) # For creating user assignments for user
 -arguments:
-sessionid cookie
+sessionid
 userid (uuid of user to create questions for)
 questions (array of questionids to assign to user)
 
@@ -113,7 +113,7 @@ questions (array of questionids)
 
 /backend/question/assign/start (POST) # For starting assignments for user
 -arguments:
-sessionid cookie
+sessionid
 assignmentid (assignmentid of assignment to start)
 
 -response:
@@ -130,7 +130,7 @@ anstoken (uuid to return when completing assignment)
 
 /backend/question/assign/complete (POST) # For completing assignments for user
 -arguments:
-sessionid cookie
+sessionid
 assignmentid (id of assignment to complete)
 anstoken (uuid of token from start assignment)
 answers (array of bools in int form for user's answers)
@@ -141,7 +141,7 @@ returns HTTP response 200 if successful
 
 /backend/question/get (GET) # For getting question info 
 -arguments:
-sessionid cookie
+sessionid
 
 questionid (questionid of question to retrieve)
 
@@ -157,7 +157,7 @@ qnimg2
 
 /backend/question/create (POST) # For creating an empty question in the system
 -arguments:
-sessionid cookie
+sessionid
 
 -response:
 returns HTTP response 200 if successful
@@ -165,7 +165,7 @@ returns HTTP response 200 if successful
 
 /backend/question/update (POST) # For updating a question in the system
 -arguments:
-sessionid cookie
+sessionid
 
 questionid(id of question)
 qnimg1(base64 encoded jpg image)(optional)
@@ -179,7 +179,7 @@ returns HTTP response 200 if successful
 
 /backend/question/multi/get (GET) # For getting multiple question info 
 -arguments:
-sessionid cookie
+sessionid
 
 difficulty (difficulty in int to retrieve, retrieves all questions if empty)
 
@@ -198,7 +198,7 @@ qnimg2 (jpg in base64)
 
 /backend/question/assign/get (GET) # For getting user assignments
 -arguments:
-sessionid cookie
+sessionid
 
 userid (userid of question assignments to retrieve)
 
@@ -214,7 +214,7 @@ anstoken (uuid to return when completing assignment, empty until complete assign
 
 /backend/question/result/create (POST) # For creating new result entries
 -arguments:
-sessionid cookie
+sessionid
 
 userid (userid of result to create)
 
@@ -224,7 +224,7 @@ returns HTTP response 201 if successful
 
 /backend/question/result/multi/get (POST) # For getting all the results for a user
 -arguments:
-sessionid cookie
+sessionid
 
 userid (userid of results to retrieve)
 
