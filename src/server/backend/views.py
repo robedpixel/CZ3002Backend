@@ -25,9 +25,9 @@ def createuser(request):
         session = SessionStore(session_key=sessionid)
         try:
             if session['role'] == 0:
-                return HttpResponse("invalid permissions", status=400)
+                return JsonResponse({"status": "Error:invalid permissions"}, status=400)
         except KeyError:
-            return HttpResponse("Please log in to create accounts", status=400)
+            return JsonResponse({"status": "Error:Please log in to create accounts"}, status=400)
         current_role = int(session['role'])
         username = received_json_data['username']
         password = received_json_data['password']
@@ -55,19 +55,19 @@ def createuser(request):
                     if 0 <= role <= 2:
                         saved_user.role = role
                     else:
-                        return HttpResponse("invalid role!", status=400)
+                        return JsonResponse({"status": "Error:invalid role!"}, status=400)
                     saved_user.username = username
                     saved_user.password = password_hash
                     if displayname is not None:
                         saved_user.displayname = displayname
                     saved_user.save()
-                    return HttpResponse(status=201)
+                    return JsonResponse({"status": "success"}, status=201)
                 else:
-                    return HttpResponse("bad user creation request", status=400)
+                    return JsonResponse({"status": "error:bad user creation request"}, status=400)
             else:
-                return HttpResponse("username already exists!", status=400)
+                return JsonResponse({"status": "error:username already exists!"}, status=400)
         else:
-            return HttpResponse("bad user creation request:invalid permissions", status=400)
+            return JsonResponse({"status": "error:bad user creation request:invalid permissions"}, status=400)
 
 
 def debug_create_user(request):
@@ -116,14 +116,14 @@ def auth_user(request):
                 s['role'] = database_acc_search[0].role
                 s.save()
                 print(type(s.session_key))
-                #request.session['authenticated'] = True
-                #request.session['uuid'] = str(database_acc_search[0].uuid)
-                #request.session['role'] = database_acc_search[0].role
+                # request.session['authenticated'] = True
+                # request.session['uuid'] = str(database_acc_search[0].uuid)
+                # request.session['role'] = database_acc_search[0].role
                 return JsonResponse(
                     {"userid": str(database_acc_search[0].uuid), "role": str(database_acc_search[0].role),
                      "sessionid": s.session_key},
                     status=200)
-    return HttpResponse(status=400)
+    return JsonResponse({"status": "error"}, status=400)
 
 
 def logout_user(request):
@@ -134,9 +134,9 @@ def logout_user(request):
             session = SessionStore(session_key=sessionid)
             if session['authenticated']:
                 session.flush()
-                return HttpResponse(status=200)
+                return JsonResponse({"status": "success"}, status=200)
         except KeyError:
-            return HttpResponse(status=400)
+            return JsonResponse({"status": "error"}, status=400)
 
 
 def get_info_user(request):
@@ -156,7 +156,7 @@ def get_info_user(request):
 
                 return JsonResponse({'users': response_list}, status=200)
         except KeyError:
-            return HttpResponse("Please Login", status=400)
+            return JsonResponse({"status": "error:Please Login"}, status=400)
 
 
 def get_info_user_multi(request):
@@ -177,9 +177,9 @@ def get_info_user_multi(request):
 
                     return JsonResponse({'users': response_list}, status=200)
                 else:
-                    return HttpResponse("Invalid permissions!", status=400)
+                    return JsonResponse({"status": "error:Invalid permissions!"}, status=400)
         except KeyError:
-            return HttpResponse("Please Login", status=400)
+            return JsonResponse({"status": "error:Please Login"}, status=400)
 
 
 def debug_check_auth(request):
@@ -201,7 +201,7 @@ def create_user_assignment(request):
                 userid = received_json_data['userid']
                 database_uuid = User.objects.filter(uuid=userid)
                 if not database_uuid:
-                    return HttpResponse("no user found", status=400)
+                    return JsonResponse({"status": "error:no user found"}, status=400)
                 questions = received_json_data['questions']
                 difficulty = received_json_data['diffculty']
                 print(questions)
@@ -209,18 +209,18 @@ def create_user_assignment(request):
                 verified = True
                 for row in questions:
                     if not row.isnumeric():
-                            verified = False
+                        verified = False
                 if verified:
                     saved_assignment = Userassignment()
                     saved_assignment.userid = userid
                     saved_assignment.questions = json.dumps(questions)
                     saved_assignment.difficulty = difficulty
                     saved_assignment.save()
-                    return HttpResponse(status=201)
+                    return JsonResponse({"status": "success"}, status=201)
                 else:
-                    return HttpResponse("bad input", status=400)
+                    return JsonResponse({"status": "error:bad input"}, status=400)
         except KeyError:
-            return HttpResponse("Please Login", status=400)
+            return JsonResponse({"status": "error:Please Login"}, status=400)
 
 
 def get_user_assignment(request):
@@ -239,9 +239,9 @@ def get_user_assignment(request):
                     return JsonResponse({'assignments': response}, status=200)
 
                 else:
-                    return HttpResponse("user has no assigned questions!", status=400)
+                    return JsonResponse({"status": "error:user has no assigned questions!"}, status=400)
         except KeyError:
-            return HttpResponse("Please Login", status=400)
+            return JsonResponse({"status": "error:Please Login"}, status=400)
 
 
 def start_user_assignment(request):
@@ -269,9 +269,9 @@ def start_user_assignment(request):
                     return JsonResponse({'assignments': response}, status=200)
 
                 else:
-                    return HttpResponse("user has no assigned questions!", status=400)
+                    return JsonResponse({"status": "error:user has no assigned questions!"}, status=400)
         except KeyError:
-            return HttpResponse("Please Login", status=400)
+            return JsonResponse({"status": "error:Please Login"}, status=400)
 
 
 def complete_user_assignment(request):
@@ -307,14 +307,14 @@ def complete_user_assignment(request):
                         result.save()
                         # remove user assignment
                         saved_assignment[0].delete()
-                        return HttpResponse(status=200)
+                        return JsonResponse({"status": "Success"}, status=200)
                     else:
-                        return HttpResponse("incorrect token sent", status=400)
+                        return JsonResponse({"status": "error:incorrect token sent"}, status=400)
 
                 else:
-                    return HttpResponse("user has no assigned questions!", status=400)
+                    return JsonResponse({"status": "error:user has no assigned questions!"}, status=400)
         except KeyError:
-            return HttpResponse("Please Login", status=400)
+            return JsonResponse({"status": "error:Please Login"}, status=400)
 
 
 def get_question(request):
@@ -332,9 +332,9 @@ def get_question(request):
                         temp_dict_obj['qnimg1'] = base64.b64encode(saved_question.qnimg1).decode("utf-8")
                         temp_dict_obj['qnimg2'] = base64.b64encode(saved_question.qnimg2).decode("utf-8")
                         return JsonResponse(temp_dict_obj, status=200)
-                return HttpResponse("no question found", status=400)
+                return JsonResponse({"status": "error:no question found"}, status=400)
         except KeyError:
-            return HttpResponse("Please Login", status=400)
+            return JsonResponse({"status": "error:Please Login"}, status=400)
 
 
 def create_question(request):
@@ -347,11 +347,11 @@ def create_question(request):
                 if int(session['role']) >= 1:
                     saved_question = Question()
                     saved_question.save()
-                    return HttpResponse(status=201)
+                    return JsonResponse({"status": "success"}, status=201)
                 else:
-                    return HttpResponse("Invalid permissions!", status=400)
+                    return JsonResponse({"status": "error:Invalid permissions!"}, status=400)
         except KeyError:
-            return HttpResponse("Please Login", status=400)
+            return JsonResponse({"status": "error:Please Login"}, status=400)
 
 
 def update_question(request):
@@ -440,13 +440,13 @@ def update_question(request):
                             if question_updated:
                                 searched_question.save()
                                 return JsonResponse(response, status=200)
-                            return HttpResponse("no updates for question specified", status=200)
+                            return JsonResponse({"status": "no updates for question specified"}, status=200)
                     except KeyError:
-                        return HttpResponse("no questionid specified!", status=400)
+                        return JsonResponse({"status": "error:no questionid specified!"}, status=400)
                 else:
-                    return HttpResponse("Invalid permissions!", status=400)
+                    return JsonResponse({"status": "error:Invalid permissions!"}, status=400)
         except KeyError:
-            return HttpResponse("Please Login", status=400)
+            return JsonResponse({"status": "error:Please Login"}, status=400)
 
 
 def get_question_multi(request):
@@ -469,7 +469,7 @@ def get_question_multi(request):
                     response.append(temp_dict_obj)
                 return JsonResponse({'questions': response}, status=200)
         except KeyError:
-            return HttpResponse("Please Login", status=400)
+            return JsonResponse({"status": "error:Please Login"}, status=400)
 
 
 def create_new_result(request):
@@ -486,12 +486,12 @@ def create_new_result(request):
                     if saved_assignment:
                         saved_result.userid = userid
                         saved_result.save()
-                        return HttpResponse(status=201)
-                    return HttpResponse("userid not found.", status=400)
+                        return JsonResponse({"status":"success"},status=201)
+                    return JsonResponse({"status": "error:userid not found."}, status=400)
                 else:
-                    return HttpResponse("Invalid permissions!", status=400)
+                    return JsonResponse({"status": "error:Invalid permissions!"}, status=400)
         except KeyError:
-            return HttpResponse("Please Login", status=400)
+            return JsonResponse({"status": "error:Please Login"}, status=400)
 
 
 def get_result_multi(request):
@@ -506,15 +506,15 @@ def get_result_multi(request):
                     if saved_result:
                         response = list(saved_result.values())
                         return JsonResponse({'results': response}, status=200)
-                    return HttpResponse("results not found.", status=400)
+                    return JsonResponse({"status": "error:results not found."}, status=400)
                 elif session['uuid'] == request.GET.get('userid'):
                     userid = request.GET.get('userid')
                     saved_result = Result.objects.filter(userid=userid)
                     if saved_result:
                         response = list(saved_result.values())
                         return JsonResponse({'results': response}, status=200)
-                    return HttpResponse("results not found.", status=400)
+                    return JsonResponse({"status": "error:results not found."}, status=400)
                 else:
-                    return HttpResponse("Invalid permissions!", status=400)
+                    return JsonResponse({"status": "error:Invalid permissions!"}, status=400)
         except KeyError:
-            return HttpResponse("Please Login", status=400)
+            return JsonResponse({"status": "error:Please Login"}, status=400)
