@@ -498,7 +498,14 @@ def get_result_multi(request):
                     if saved_result:
                         response = list(saved_result.values())
                         return JsonResponse({'results': response}, status=200)
-                    return HttpResponse("userid not found.", status=400)
+                    return HttpResponse("results not found.", status=400)
+                elif session['uuid'] == request.GET.get('userid'):
+                    userid = request.GET.get('userid')
+                    saved_result = Result.objects.filter(userid=userid)
+                    if saved_result:
+                        response = list(saved_result.values())
+                        return JsonResponse({'results': response}, status=200)
+                    return HttpResponse("results not found.", status=400)
                 else:
                     return HttpResponse("Invalid permissions!", status=400)
         except KeyError:
