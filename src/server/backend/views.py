@@ -120,7 +120,8 @@ def auth_user(request):
                 # request.session['uuid'] = str(database_acc_search[0].uuid)
                 # request.session['role'] = database_acc_search[0].role
                 return JsonResponse(
-                    {"userid": str(database_acc_search[0].uuid), "role": str(database_acc_search[0].role),
+                    {"status": "success", "userid": str(database_acc_search[0].uuid),
+                     "role": str(database_acc_search[0].role),
                      "sessionid": s.session_key},
                     status=200)
     return JsonResponse({"status": "error"}, status=400)
@@ -154,7 +155,7 @@ def get_info_user(request):
                                    key == 'username' or key == 'displayname')
                     response_list.append(diction)
 
-                return JsonResponse({'users': response_list}, status=200)
+                return JsonResponse({"status": "success", 'users': response_list}, status=200)
         except KeyError:
             return JsonResponse({"status": "error:Please Login"}, status=400)
 
@@ -175,7 +176,7 @@ def get_info_user_multi(request):
                                        key == "uuid" or key == 'username' or key == 'displayname')
                         response_list.append(diction)
 
-                    return JsonResponse({'users': response_list}, status=200)
+                    return JsonResponse({"status": "success", 'users': response_list}, status=200)
                 else:
                     return JsonResponse({"status": "error:Invalid permissions!"}, status=400)
         except KeyError:
@@ -236,7 +237,7 @@ def get_user_assignment(request):
 
                     # Get list of ids from database
                     response = list(saved_assignment.values())
-                    return JsonResponse({'assignments': response}, status=200)
+                    return JsonResponse({"status": "success", 'assignments': response}, status=200)
 
                 else:
                     return JsonResponse({"status": "error:user has no assigned questions!"}, status=400)
@@ -266,7 +267,7 @@ def start_user_assignment(request):
                     result.attemptdatetime = pytz.utc.localize(datetime.now())
                     result.resultid = saved_assignment[0].assignmentid
                     result.save()
-                    return JsonResponse({'assignments': response}, status=200)
+                    return JsonResponse({"status": "success", 'assignments': response}, status=200)
 
                 else:
                     return JsonResponse({"status": "error:user has no assigned questions!"}, status=400)
@@ -363,7 +364,7 @@ def update_question(request):
             if session['authenticated']:
                 if int(session['role']) >= 1:
                     saved_question = Question()
-                    response = {'updated': []}
+                    response = {"status": "success", 'updated': []}
                     try:
                         questionid = received_json_data['questionid']
                         searched_question = Question.objects.get(questionid=questionid)
@@ -467,7 +468,7 @@ def get_question_multi(request):
                     temp_dict_obj['qnimg1'] = base64.b64encode(question.qnimg1).decode("utf-8")
                     temp_dict_obj['qnimg2'] = base64.b64encode(question.qnimg2).decode("utf-8")
                     response.append(temp_dict_obj)
-                return JsonResponse({'questions': response}, status=200)
+                return JsonResponse({"status": "success", 'questions': response}, status=200)
         except KeyError:
             return JsonResponse({"status": "error:Please Login"}, status=400)
 
@@ -486,7 +487,7 @@ def create_new_result(request):
                     if saved_assignment:
                         saved_result.userid = userid
                         saved_result.save()
-                        return JsonResponse({"status":"success"},status=201)
+                        return JsonResponse({"status": "success"}, status=201)
                     return JsonResponse({"status": "error:userid not found."}, status=400)
                 else:
                     return JsonResponse({"status": "error:Invalid permissions!"}, status=400)
@@ -505,14 +506,14 @@ def get_result_multi(request):
                     saved_result = Result.objects.filter(userid=userid)
                     if saved_result:
                         response = list(saved_result.values())
-                        return JsonResponse({'results': response}, status=200)
+                        return JsonResponse({"status": "success", 'results': response}, status=200)
                     return JsonResponse({"status": "error:results not found."}, status=400)
                 elif session['uuid'] == request.GET.get('userid'):
                     userid = request.GET.get('userid')
                     saved_result = Result.objects.filter(userid=userid)
                     if saved_result:
                         response = list(saved_result.values())
-                        return JsonResponse({'results': response}, status=200)
+                        return JsonResponse({"status": "success", 'results': response}, status=200)
                     return JsonResponse({"status": "error:results not found."}, status=400)
                 else:
                     return JsonResponse({"status": "error:Invalid permissions!"}, status=400)
