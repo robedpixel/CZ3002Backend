@@ -197,6 +197,7 @@ def create_user_assignment(request):
                 if not database_uuid:
                     return HttpResponse("no user found", status=400)
                 questions = received_json_data['questions']
+                difficulty = received_json_data['diffculty']
                 print(questions)
                 # verify if input is reasonable
                 verified = True
@@ -207,6 +208,7 @@ def create_user_assignment(request):
                     saved_assignment = Userassignment()
                     saved_assignment.userid = userid
                     saved_assignment.questions = json.dumps(questions)
+                    saved_assignment.difficulty = difficulty
                     saved_assignment.save()
                     return HttpResponse(status=200)
                 else:

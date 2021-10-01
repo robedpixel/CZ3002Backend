@@ -32,6 +32,7 @@ class Result(models.Model):
     qnscorrect = models.IntegerField()
     attemptdatetime = models.DateTimeField()
     completiontime = models.IntegerField()
+    difficulty = models.PositiveSmallIntegerField()
 
     class Meta:
         unique_together = (('resultid', 'userid'),)

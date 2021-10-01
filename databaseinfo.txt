@@ -33,3 +33,4 @@ backend_result:
 -qnscorrect(int)
 -attemptdatetime(timestamp)
 -completiontime(int)
+-difficulty(smallint)

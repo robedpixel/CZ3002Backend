@@ -104,6 +104,7 @@ questions (array of questionids)
 sessionid
 userid (uuid of user to create questions for)
 questions (array of questionids to assign to user)
+difficulty (difficulty of questions)
 
 -response:
 returns HTTP response 200 if successful
@@ -240,3 +241,4 @@ qnsanswered
 qnscorrect
 attemptdatetime
 completiontime
+difficulty
