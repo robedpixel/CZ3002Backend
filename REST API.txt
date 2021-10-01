@@ -17,6 +17,7 @@ sessionid
 username (username of the user to be created)
 password (password of the user to be created)
 role (role of the user to be created)
+displayname (optional) (displayname of user to be created)
 
 -response:
 
@@ -52,11 +53,6 @@ returns HTTP response 200 if successful
 sessionid
 
 userid (uuid of user to get info from)
-
--response:
-returns HTTP response 200 if successful
-json with fields:
-users (array of Users)
 
 -response:
 returns HTTP response 200 if successful

@@ -28,10 +28,14 @@ def createuser(request):
                 return HttpResponse("invalid permissions", status=400)
         except KeyError:
             return HttpResponse("Please log in to create accounts", status=400)
-        current_role = int(request.session['role'])
+        current_role = int(session['role'])
         username = received_json_data['username']
         password = received_json_data['password']
         role = int(received_json_data['role'])
+        try:
+            displayname = received_json_data['displayname']
+        except KeyError:
+            displayname = None
         # if role < current_role or role == 2:
         if role < current_role or current_role == 2:
             if not User.objects.filter(username=username):
@@ -54,6 +58,8 @@ def createuser(request):
                         return HttpResponse("invalid role!", status=400)
                     saved_user.username = username
                     saved_user.password = password_hash
+                    if displayname is not None:
+                        saved_user.displayname = displayname
                     saved_user.save()
                     return HttpResponse(status=201)
                 else:
