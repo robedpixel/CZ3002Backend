@@ -216,7 +216,7 @@ def create_user_assignment(request):
                     saved_assignment.questions = json.dumps(questions)
                     saved_assignment.difficulty = difficulty
                     saved_assignment.save()
-                    return HttpResponse(status=200)
+                    return HttpResponse(status=201)
                 else:
                     return HttpResponse("bad input", status=400)
         except KeyError:
@@ -347,7 +347,7 @@ def create_question(request):
                 if int(session['role']) >= 1:
                     saved_question = Question()
                     saved_question.save()
-                    return HttpResponse(status=200)
+                    return HttpResponse(status=201)
                 else:
                     return HttpResponse("Invalid permissions!", status=400)
         except KeyError:

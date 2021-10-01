@@ -103,7 +103,7 @@ questions (array of questionids to assign to user)
 difficulty (difficulty of questions)
 
 -response:
-returns HTTP response 200 if successful
+returns HTTP response 201 if successful
 json with fields:
 questions (array of questionids)
 
@@ -157,7 +157,7 @@ qnimg2
 sessionid
 
 -response:
-returns HTTP response 200 if successful
+returns HTTP response 201 if successful
 
 
 /backend/question/update (POST) # For updating a question in the system
