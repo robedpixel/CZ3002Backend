@@ -148,8 +148,8 @@ json with fields:
 questionid
 answer
 difficulty
-qnimg1
-qnimg2
+qnimg1 (base64 encoded jpg image)
+qnimg2 (base64 encoded jpg image)
 
 
 /backend/question/create (POST) # For creating an empty question in the system
