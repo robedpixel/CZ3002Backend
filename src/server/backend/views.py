@@ -199,12 +199,15 @@ def create_user_assignment(request):
             sessionid = received_json_data['sessionid']
             session = SessionStore(session_key=sessionid)
             if session['authenticated'] and int(session['role']) >= 1:
-                userid = received_json_data['userid']
+                try:
+                    userid = received_json_data['userid']
+                    questions = received_json_data['questions']
+                    difficulty = received_json_data['diffculty']
+                except KeyError:
+                    return JsonResponse({"status": "error:missing params"}, status=400)
                 database_uuid = User.objects.filter(uuid=userid)
                 if not database_uuid:
                     return JsonResponse({"status": "error:no user found"}, status=400)
-                questions = received_json_data['questions']
-                difficulty = received_json_data['diffculty']
                 print(questions)
                 # verify if input is reasonable
                 verified = True
@@ -220,6 +223,8 @@ def create_user_assignment(request):
                     return JsonResponse({"status": "success"}, status=201)
                 else:
                     return JsonResponse({"status": "error:bad input"}, status=400)
+            else:
+                return JsonResponse({"status": "error:invalid permissions!"}, status=400)
         except KeyError:
             return JsonResponse({"status": "error:Please Login"}, status=400)
 
