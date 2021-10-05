@@ -202,7 +202,7 @@ def create_user_assignment(request):
                 try:
                     userid = received_json_data['userid']
                     questions = received_json_data['questions']
-                    difficulty = received_json_data['diffculty']
+                    difficulty = received_json_data['difficulty']
                 except KeyError:
                     return JsonResponse({"status": "error:missing params"}, status=400)
                 database_uuid = User.objects.filter(uuid=userid)
