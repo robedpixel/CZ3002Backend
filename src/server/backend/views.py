@@ -20,9 +20,13 @@ def index(request):
 @ensure_csrf_cookie
 def createuser(request):
     if request.method == 'POST':
-        received_json_data = json.loads(request.body)
-        sessionid = received_json_data['sessionid']
-        session = SessionStore(session_key=sessionid)
+        try:
+            received_json_data = json.loads(request.body)
+            sessionid = received_json_data['sessionid']
+            session = SessionStore(session_key=sessionid)
+        except KeyError:
+            return JsonResponse({"status": "error:Please Login"}, status=400)
+
         try:
             if session['role'] == 0:
                 return JsonResponse({"status": "Error:invalid permissions"}, status=400)
@@ -68,6 +72,49 @@ def createuser(request):
                 return JsonResponse({"status": "error:username already exists!"}, status=400)
         else:
             return JsonResponse({"status": "error:bad user creation request:invalid permissions"}, status=400)
+
+
+def update_user_password(request):
+    if request.method == 'POST':
+        try:
+            received_json_data = json.loads(request.body)
+            sessionid = received_json_data['sessionid']
+            session = SessionStore(session_key=sessionid)
+            try:
+                old_password = received_json_data['oldpassword']
+                new_password = received_json_data['newpassword']
+                if new_password is None:
+                    return JsonResponse({"status": "error:missing params."}, status=400)
+            except KeyError:
+                return JsonResponse({"status": "error:missing params."}, status=400)
+            saved_user = User.objects.get(uuid=session['uuid'])
+            matchcheck = check_password(old_password, saved_user.password)
+            if matchcheck:
+                saved_user.password = make_password(new_password)
+                saved_user.save()
+                return JsonResponse({"status": "success"}, status=200)
+            else:
+                return JsonResponse({"status": "error:invalid password"}, status=400)
+        except KeyError:
+            return JsonResponse({"status": "error:Please Login"}, status=400)
+
+
+def update_user_displayname(request):
+    if request.method == 'POST':
+        try:
+            received_json_data = json.loads(request.body)
+            sessionid = received_json_data['sessionid']
+            session = SessionStore(session_key=sessionid)
+            try:
+                new_displayname = received_json_data['displayname']
+            except KeyError:
+                return JsonResponse({"status": "error:missing params."}, status=400)
+            saved_user = User.objects.get(uuid=session['uuid'])
+            saved_user.displayname = new_displayname
+            saved_user.save()
+            return JsonResponse({"status": "success"}, status=200)
+        except KeyError:
+            return JsonResponse({"status": "error:Please Login"}, status=400)
 
 
 def debug_create_user(request):
@@ -148,7 +195,9 @@ def get_info_user(request):
             if session['authenticated']:
                 user_uuid = request.GET.get('userid')
                 saved_user = User.objects.get(uuid=user_uuid)
-                return JsonResponse({"status": "success", 'username': saved_user.username,'displayname': saved_user.displayname}, status=200)
+                return JsonResponse(
+                    {"status": "success", 'username': saved_user.username, 'displayname': saved_user.displayname},
+                    status=200)
         except KeyError:
             return JsonResponse({"status": "error:Please Login"}, status=400)
 

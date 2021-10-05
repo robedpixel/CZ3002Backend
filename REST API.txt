@@ -30,6 +30,30 @@ role (role of logged in user)
 HTTP response 400 otherwise
 
 
+/backend/user/update/password (POST) # For updating user password
+-arguments:
+sessionid
+oldpassword (session user's old password)
+newpassword (session user's new password)
+
+-response:
+returns HTTP response 200 if successful
+
+HTTP response 400 if oldpassword does not match current password
+HTTP response 400 otherwise
+
+
+/backend/user/update/displayname (POST) # For updating user password
+-arguments:
+sessionid
+displayname (session user's new displayname)
+
+-response:
+returns HTTP response 200 if successful
+
+HTTP response 400 otherwise
+
+
 /backend/user/login (POST) # For logging into a session
 -arguments:
 username (username to login)
