@@ -506,15 +506,17 @@ def get_result_multi(request):
         session = SessionStore(session_key=sessionid)
         try:
             if session['authenticated']:
-                if int(session['role']) >= 1:
+                try:
                     userid = request.GET.get('userid')
+                except KeyError:
+                    return JsonResponse({"status": "error:missing params."}, status=400)
+                if int(session['role']) >= 1:
                     saved_result = Result.objects.filter(userid=userid)
                     if saved_result:
                         response = list(saved_result.values())
                         return JsonResponse({"status": "success", 'results': response}, status=200)
                     return JsonResponse({"status": "error:results not found."}, status=400)
                 elif session['uuid'] == request.GET.get('userid'):
-                    userid = request.GET.get('userid')
                     saved_result = Result.objects.filter(userid=userid)
                     if saved_result:
                         response = list(saved_result.values())
