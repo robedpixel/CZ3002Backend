@@ -57,9 +57,6 @@ userid (uuid of user to get info from)
 -response:
 returns HTTP response 200 if successful
 json with fields:
-users (array of Users)
-
--User format:
 username (username of user)
 displaynane (display name of user)
 

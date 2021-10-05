@@ -147,15 +147,8 @@ def get_info_user(request):
             session = SessionStore(session_key=sessionid)
             if session['authenticated']:
                 user_uuid = request.GET.get('userid')
-                saved_user = User.objects.filter(uuid=user_uuid).values()
-                # Filter out password hash and role from the model before sending it
-                response_list = []
-                for user in saved_user:
-                    diction = dict((key, value) for key, value in user.items() if
-                                   key == 'username' or key == 'displayname')
-                    response_list.append(diction)
-
-                return JsonResponse({"status": "success", 'users': response_list}, status=200)
+                saved_user = User.objects.get(uuid=user_uuid)
+                return JsonResponse({"status": "success", 'username': saved_user.username,'displayname': saved_user.displayname}, status=200)
         except KeyError:
             return JsonResponse({"status": "error:Please Login"}, status=400)
 
