@@ -339,10 +339,8 @@ def complete_user_assignment(request):
                         assignment_questions_list = []
                         correct_answers_list = []
                         for question in questions:
-                            assignment_questions_list.append(int(question))
-                        question_info = Question.objects.filter(questionid__in=assignment_questions_list)
-                        for question in question_info:
-                            correct_answers_list.append(int(question.answer))
+                            question_info = Question.objects.get(questionid=int(question))
+                            correct_answers_list.append(int(question_info.answer))
                         # Add result to results
                         result = Result.objects.get(resultid=saved_assignment[0].assignmentid)
                         result.qnsanswered = len(assignment_questions_list)
