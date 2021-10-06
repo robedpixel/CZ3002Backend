@@ -154,6 +154,7 @@ anstoken (uuid of token from start assignment)
 answers (array of bools in int form for user's answers)
 
 -response:
+score (the user's score for the assignment)
 returns HTTP response 200 if successful
 
 

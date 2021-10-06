@@ -353,7 +353,7 @@ def complete_user_assignment(request):
                         result.save()
                         # remove user assignment
                         saved_assignment[0].delete()
-                        return JsonResponse({"status": "Success"}, status=200)
+                        return JsonResponse({"status": "Success", "score": str(qns_correct)}, status=200)
                     else:
                         return JsonResponse({"status": "error:incorrect token sent"}, status=400)
 
