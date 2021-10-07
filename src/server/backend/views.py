@@ -346,7 +346,7 @@ def complete_user_assignment(request):
                             correct_answers_list.append(int(question_info.answer))
                         # Add result to results
                         result = Result.objects.get(resultid=saved_assignment[0].assignmentid)
-                        result.qnsanswered = len(assignment_questions_list)
+                        result.qnsanswered = len(questions)
                         qns_correct = 0
                         for ans, correct_ans in zip(answers, correct_answers_list):
                             if int(ans) == correct_ans:
