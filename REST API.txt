@@ -1,4 +1,3 @@
-#test
 CONSTANTS:
 
 DIFFICULTY_HARD = 2
