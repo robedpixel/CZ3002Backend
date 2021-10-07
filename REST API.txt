@@ -231,6 +231,18 @@ userid (userid of assignment)
 questions (array of questionids for assignment)
 anstoken (uuid to return when completing assignment, empty until complete assignment function is called)
 
+
+/backend/question/assign/create (POST) # For creating user assignments
+-arguments:
+sessionid (current sessionid, user must have staff role or higher)
+userid (userid that the assignment is being given to)
+questions (array questionids in string form, for example ["1","2","3"])
+difficulty (difficulty in int)
+
+-response:
+returns HTTP response 201 if successful
+
+
 /backend/question/result/create (POST) # For creating new result entries
 -arguments:
 sessionid
