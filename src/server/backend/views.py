@@ -328,10 +328,13 @@ def complete_user_assignment(request):
             received_json_data = json.loads(request.body)
             sessionid = received_json_data['sessionid']
             session = SessionStore(session_key=sessionid)
-            if session['authenticated']:
+            try:
                 anstoken = received_json_data['anstoken']
                 assignment_id = received_json_data['assignmentid']
                 answers = received_json_data['answers']
+            except KeyError:
+                return JsonResponse({"status": "error:missing params."}, status=400)
+            if session['authenticated']:
                 saved_assignment = Userassignment.objects.filter(assignmentid=int(assignment_id))
                 if saved_assignment:
                     if saved_assignment[0].anstoken == uuid.UUID(anstoken):
