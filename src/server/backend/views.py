@@ -171,6 +171,14 @@ def auth_user(request):
                      "role": str(database_acc_search[0].role),
                      "sessionid": s.session_key},
                     status=200)
+            else:
+                return JsonResponse(
+                    {"status": "Error: invalid username or password"},
+                    status=400)
+        else:
+            return JsonResponse(
+                {"status": "Error: invalid username or password"},
+                status=400)
     return JsonResponse({"status": "error"}, status=400)
 
 
