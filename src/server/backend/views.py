@@ -153,7 +153,7 @@ def auth_user(request):
         username = received_json_data['username']
         password = received_json_data['password']
         database_acc_search = User.objects.filter(username=username)
-        if database_acc_search is not None:
+        if database_acc_search:
             matchcheck = check_password(password, database_acc_search[0].password)
             if matchcheck:
                 s = SessionStore()
