@@ -1,3 +1,4 @@
+#
 CONSTANTS:
 
 DIFFICULTY_HARD = 2
@@ -13,7 +14,7 @@ PATHS:
 
 /backend/user/create (POST) # For creating user accounts
 -arguments:
-sessionid 
+sessionid
 username (username of the user to be created)
 password (password of the user to be created)
 role (role of the user to be created)
@@ -158,7 +159,7 @@ score (the user's score for the assignment)
 returns HTTP response 200 if successful
 
 
-/backend/question/get (GET) # For getting question info 
+/backend/question/get (GET) # For getting question info
 -arguments:
 sessionid
 
@@ -196,7 +197,7 @@ difficulty(positive number from 0 to 32767 inclusive)(optional)
 returns HTTP response 200 if successful
 
 
-/backend/question/multi/get (GET) # For getting multiple question info 
+/backend/question/multi/get (GET) # For getting multiple question info
 -arguments:
 sessionid
 
