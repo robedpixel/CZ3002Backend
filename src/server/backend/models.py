@@ -22,6 +22,7 @@ class Userassignment(models.Model):
     assignmentid = models.AutoField(primary_key=True, editable=False)
     userid = models.UUIDField(editable=False)
     questions = models.TextField()
+    difficulty = models.PositiveSmallIntegerField()
     anstoken = models.UUIDField()
 
 

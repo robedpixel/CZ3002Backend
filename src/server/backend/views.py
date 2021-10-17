@@ -321,6 +321,7 @@ def start_user_assignment(request):
                     result.userid = saved_assignment[0].userid
                     result.attemptdatetime = pytz.utc.localize(datetime.now())
                     result.resultid = saved_assignment[0].assignmentid
+                    result.difficulty = saved_assignment[0].difficulty
                     result.save()
                     return JsonResponse({"status": "success", 'assignments': response}, status=200)
 

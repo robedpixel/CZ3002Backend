@@ -18,6 +18,7 @@ backend_userassignment:
 -userid(UUID)
 -questions(varchar) (use Python json.dumps/loads to serialise/deserialise data into list)
 -anstoken(UUID)
+-difficulty(smallint)
 
 backend_question:
 -questionid(smallserial) (primary key)
