@@ -187,10 +187,10 @@ returns HTTP response 201 if successful
 sessionid
 
 questionid(id of question)
-qnimg1(base64 encoded jpg image)(optional)
-qnimg2(base64 encoded jpg image)(optional)
-answer(boolean for whether images are similar)(optional)
-difficulty(positive number from 0 to 32767 inclusive)(optional)
+qnimg1(base64 encoded jpg image)(optional)(set to DELETE to clear)
+qnimg2(base64 encoded jpg image)(optional)(set to DELETE to clear)
+answer(boolean for whether images are similar)(optional)(set to DELETE to clear)
+difficulty(positive number from 0 to 32767 inclusive)(optional)(set to DELETE to clear)
 
 -response:
 returns HTTP response 200 if successful
