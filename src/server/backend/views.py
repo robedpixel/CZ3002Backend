@@ -480,7 +480,7 @@ def update_question(request):
                             # Update for difficulty
                             try:
                                 difficulty = received_json_data['difficulty']
-                                if difficulty:
+                                if difficulty or difficulty == 0:
                                     if difficulty == "DELETE":
                                         searched_question.difficulty = None
                                         question_updated = True
@@ -515,7 +515,7 @@ def get_question_multi(request):
         try:
             if session['authenticated']:
                 difficulty = request.GET.get("difficulty")
-                if difficulty:
+                if difficulty or difficulty == 0:
                     int_difficulty = int(difficulty)
                     searched_question = Question.objects.filter(difficulty=int_difficulty)
                 else:
