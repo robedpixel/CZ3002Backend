@@ -203,6 +203,8 @@ sessionid
 
 difficulty (difficulty in int to retrieve, retrieves all questions if empty)
 
+incomplete (optional, if difficulty is empty and incomplete is set to true or 1, returns all incomplete questions)
+
 -response:
 returns HTTP response 200 if successful
 json with fields:

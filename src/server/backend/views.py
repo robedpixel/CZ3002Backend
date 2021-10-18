@@ -6,6 +6,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from .models import User, Userassignment, Question, Result
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.forms.models import model_to_dict
+from django.db.models import Q
 from django.contrib.sessions.backends.db import SessionStore
 import json, base64, pytz
 from django.core import serializers
@@ -518,7 +519,15 @@ def get_question_multi(request):
                     int_difficulty = int(difficulty)
                     searched_question = Question.objects.filter(difficulty=int_difficulty)
                 else:
-                    searched_question = Question.objects.all()
+                    incomplete = request.GET.get("incomplete")
+                    if incomplete:
+                        if bool(incomplete):
+                            searched_question = Question.objects.filter(Q(qnimg1=None) | Q(qnimg2=None) | Q(
+                                difficulty=None) | Q(answer=None))
+                        else:
+                            searched_question = Question.objects.all()
+                    else:
+                        searched_question = Question.objects.all()
                 response = []
                 for question in searched_question:
                     temp_dict_obj = model_to_dict(question)
