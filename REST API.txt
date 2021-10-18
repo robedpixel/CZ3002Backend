@@ -179,6 +179,7 @@ qnimg2 (base64 encoded jpg image)
 sessionid
 
 -response:
+questionid (questionid of newly created question)
 returns HTTP response 201 if successful
 
 

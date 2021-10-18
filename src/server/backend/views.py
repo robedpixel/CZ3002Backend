@@ -405,7 +405,7 @@ def create_question(request):
                 if int(session['role']) >= 1:
                     saved_question = Question()
                     saved_question.save()
-                    return JsonResponse({"status": "success"}, status=201)
+                    return JsonResponse({"status": "success", "questionid": str(saved_question.questionid)}, status=201)
                 else:
                     return JsonResponse({"status": "error:Invalid permissions!"}, status=400)
         except KeyError:
