@@ -1,4 +1,3 @@
-#TEST
 # CZ3002Backend
 Django Backend server for CZ3002 project
 
